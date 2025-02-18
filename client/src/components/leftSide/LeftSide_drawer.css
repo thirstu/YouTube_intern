@@ -1,0 +1,67 @@
+
+
+.leftSide_drawer_container{
+    display: flex;
+    padding: 0.5rem 0rem;
+    flex-direction: column;
+    gap: 2rem;
+    overflow: scroll;
+    scrollbar-width: none;
+
+}
+/* ::-webkit-scrollbar {
+    display: none;
+  }
+   */
+  /* Hide scrollbar for Firefox */
+  /* * {
+    scrollbar-width: none;
+  } */
+
+.left_item_container{
+    background-color: blueviolet;
+    width: 20rem;
+    display: flex;
+    align-items: center;
+    padding:0.5rem 1rem ;
+    margin: 0rem 1rem ;
+    gap: 1.5rem;
+    border-radius: 1rem;
+
+}
+.left_block{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding:0rem 0rem 2rem 0rem ;
+    border-bottom: black solid 0.3rem;
+
+}
+.left_icons{
+    height: 2.8rem;
+    width: 2.8rem;
+
+}
+.left_item_container>span{
+    /* color: brown; */
+   font-size: 1.6rem;
+   font-weight: 600;
+
+}
+.greater{
+    font-size: 1.4rem;
+    padding: 0.5rem 0rem;
+}
+
+.profile{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.4rem;
+    width: 2.4rem;
+    border: solid 0.2rem black;
+    border-radius: 50%;
+}
+.block_title{
+    padding: 0.8rem 0rem;
+}
