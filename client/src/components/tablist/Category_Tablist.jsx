@@ -8,7 +8,7 @@ const Category_Tablist = () => {
   ]
   return (
     <div className="category_tablist">
-      {tab_category.map(category=>(<span className='category'>{`${category}`}</span>))}
+      {tab_category.map(category=>(<span className='category' key={category}>{`${category}`}</span>))}
     </div>
   )
 }

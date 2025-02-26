@@ -2,12 +2,18 @@
 
 .leftSide_drawer_container{
     display: flex;
-    padding: 0.5rem 0rem;
+    padding: 0rem 0rem;
     flex-direction: column;
     gap: 2rem;
     overflow: scroll;
     scrollbar-width: none;
+    position: absolute;
+    height: 100%;
+    z-index: 99;
 
+}
+.active{
+    display: none;
 }
 /* ::-webkit-scrollbar {
     display: none;
@@ -17,7 +23,24 @@
   /* * {
     scrollbar-width: none;
   } */
+   .left_logo_burger{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+background-color: rgb(195, 0, 255);
+/* height: 9rem; */
+padding: 1.2rem 0rem;
+top: 0;
+position: sticky;
+   }
 
+.nav{
+    /* padding-left: 3rem; */
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    height: 4.5rem;
+}
 .left_item_container{
     background-color: blueviolet;
     width: 20rem;

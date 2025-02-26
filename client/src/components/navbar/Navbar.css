@@ -148,14 +148,31 @@ border-radius: 0rem 5rem 5rem 0rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
+    position: relative;
+    
+}
+.nav_profile>span{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+    font-size: 1.5rem;
     height: 3rem;
     width: 3rem;
     border-radius: 50%;
     background-color: rgb(255, 60, 0);
+
+    cursor: pointer;
+
+
+
 }
-.nav_profile>span{
-    color: black;
-    font-size: 1.5rem;
+.nav_auth_container{
+    position: absolute;
+    top: 5rem;
 
-
+}
+.active{
+    display: none;
 }

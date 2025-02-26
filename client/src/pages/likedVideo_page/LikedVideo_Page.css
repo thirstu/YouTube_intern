@@ -1,0 +1,16 @@
+.liked_videos_page_container{
+    height: 100%;
+    width: 100%;
+    display: flex;
+
+}
+.left_liked_profile_container{
+    background-color: blanchedalmond;
+
+    width: 35rem;
+}
+.right_liked_videos_container{
+    display: flex;
+    flex-direction: column;
+
+}

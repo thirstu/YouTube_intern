@@ -29,12 +29,15 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { MdOutlineFlag } from "react-icons/md";
 import "./LeftSide_drawer.css";
 import { RxHamburgerMenu } from "react-icons/rx";
+import helperTools from "../../helper_tools";
+import { Link } from "react-router-dom";
 const LeftSide_drawer = () => {
+
   return (
-    <div className="leftSide_drawer_container">
-      <div className="left_block">
-        <div className="nav_left">
-                <RxHamburgerMenu className="icon_burger" />
+    <div className="leftSide_drawer_container active">
+      <div className="left_logo_burger">
+        <div className="nav">
+                <RxHamburgerMenu className="icon_burger" onClick={(e)=>helperTools.active(document.getElementsByClassName("leftSide_drawer_container")[0])} />
                 <div className="logo">
                   <FaYoutube className="youTube_logo" />
                   <span>YouTube</span>
@@ -46,7 +49,7 @@ const LeftSide_drawer = () => {
       <div className="left_block">
         <div className="left_home   left_item_container ">
           <IoMdHome className="left_icons" />
-          <span>Home</span>
+          <span><Link to={`/`}>Home</Link></span>
         </div>
         <div className="left_shorts  left_item_container">
           <SiYoutubeshorts className="left_icons" />
@@ -61,33 +64,33 @@ const LeftSide_drawer = () => {
 
       <div className="left_block">
         <div className=" left_item_container">
-          <span className="block_title"> You</span>
+          <span className="block_title"> <Link to={`/you`}>You</Link></span>
           <PiGreaterThanBold className="greater" />
         </div>
         <div className=" left_item_container">
           <LuHistory className="left_icons" />
-          <span className="greater">History </span>
+          <span className="greater"> <Link to={`/watchHistory`}>History</Link></span>
         </div>
         <div className=" left_item_container">
           <MdOutlinePlaylistPlay className="left_icons" />
-          <span className="greater">Playlists </span>
+          <span className="greater"> <Link to={`/watchHistory`}>Playlists</Link></span>
         </div>
         <div className=" left_item_container">
           <CiYoutube className="left_icons" />
-          <span className="greater">Your Videos </span>
+          <span className="greater"><Link to={`/yourVideo`}>Your Videos</Link> </span>
         </div>
         <div className=" left_item_container">
           <MdOutlineWatchLater className="left_icons" />
-          <span className="greater">Watch Later </span>
+          <span className="greater"><Link to={`/watchLater`}>Watch Later</Link>  </span>
         </div>
         <div className=" left_item_container">
           <BiLike className="left_icons" />
 
-          <span className="greater">Liked Videos </span>
+          <span className="greater"> <Link to={`/likedVideos`}>Liked Videos</Link></span>
         </div>
         <div className=" left_item_container">
           <MdOutlineContentCut className="left_icons" />
-          <span className="greater">Your Clips </span>
+          <span className="greater"> <Link to={`/likedVideos`}>Your Clips</Link></span>
         </div>
       </div>
 
@@ -100,12 +103,12 @@ const LeftSide_drawer = () => {
         <div className=" left_item_container">
           <span className="profile">ab</span>
 
-          <span className="greater">channel1 </span>
+          <span className="greater"> <Link to={`/likedVideos`}>channel1</Link></span>
         </div>
         <div className=" left_item_container">
           <span className="profile">h</span>
 
-          <span className="greater">channel2 </span>
+          <span className="greater"><Link to={`/likedVideos`}>channel2</Link> </span>
         </div>
       </div>
       {/* /////////////////////////////// */}
