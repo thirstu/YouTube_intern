@@ -1,0 +1,9 @@
+.auth_page_container{
+    /* height: 60rem; */
+    /* width: 50rem; */
+    /* position: absolute; */
+    /* left: 50%; */
+    /* top: 50%; */
+    background-color: rgb(33, 168, 168);
+    z-index: 99;
+}

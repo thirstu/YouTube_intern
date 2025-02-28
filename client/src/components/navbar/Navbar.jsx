@@ -10,6 +10,7 @@ import helperTools from "../../helper_tools";
 
 import "./Navbar.css";
 import { Link } from "react-router-dom";
+import Auth_Page from "../../pages/auth_page/Auth_Page";
 const Navbar = () => {
   const [isActive, setIsActive] =useState(true);
 
@@ -59,6 +60,8 @@ const Navbar = () => {
             <button><Link to={'/'} >Sign Up</Link></button>
           </div>
         </div>
+        <Auth_Page/>
+        
       </div>
     </div>
   );
