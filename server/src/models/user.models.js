@@ -44,7 +44,7 @@ const userSchema=new mongoose.Schema(
 /////encrypting user password
 userSchema.pre("save", async function (req,res,next){
     if(!this.isModified("password")) return next();
-    this.password=bcryptjs.hash(this.password,10);
+    this.password=await bcryptjs.hash(this.password,10);
     next();
 
 })

@@ -21,24 +21,32 @@ const uploadOnCloudinary = async (localFilePath)=>{
             resource_type:'auto'
         })
         ////file has been uploaded
-        console.log(`file has been uploaded`);
+        console.log(`file has been uploaded`,response.url);
+        return response
     } catch (err) {
+        fs.unlinkSync(localFilePath)////removes temporary file stored locally as upload got  failed
+
         console.error(err);
+        return null;
         
     }
 
 }
 
 
-// Upload an image
-const uploadResult = await cloudinary.uploader
-.upload(
-    'https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg', {
-        public_id: 'shoes',
-    }
-)
-.catch((error) => {
-    console.log(error);
-});
 
-console.log(uploadResult);
+export {uploadOnCloudinary}
+
+
+// // Upload an image
+// const uploadResult = await cloudinary.uploader
+// .upload(
+//     'https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg', {
+//         public_id: 'shoes',
+//     }
+// )
+// .catch((error) => {
+//     console.log(error);
+// });
+
+// console.log(uploadResult);
