@@ -4,7 +4,7 @@ import connectDB from './db/index.js';
 import { env_file } from './index_env.js';
 
 dotenv.config({
-    path:'./env'
+    path:'./.env'
 })
 // import express, { text } from 'express';
 // import mongoose from 'mongoose';
