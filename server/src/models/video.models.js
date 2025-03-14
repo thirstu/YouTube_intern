@@ -20,6 +20,9 @@ const videoSchema=new mongoose.Schema(
             type:String,
             required:true,
         },
+        category:{
+            type:String,
+        },
         duration:{
             type:Number,//cloudinary 
             required:true,

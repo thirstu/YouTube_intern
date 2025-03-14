@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
 import { env_file } from '../index_env.js';
+import { ApiResponse } from './apiResponse.js';
 (async function() {
 
     // Configuration
@@ -21,7 +22,7 @@ const uploadOnCloudinary = async (localFilePath)=>{
             resource_type:'auto'
         })
         ////file has been uploaded
-        console.log(`uploadOnCloudinary---24---file has been uploaded`,response.url);
+        console.log(`uploadOnCloudinary---24---file has been uploaded`,response.url,response);
         fs.unlinkSync(localFilePath)
         return response
     } catch (err) {
@@ -34,9 +35,45 @@ const uploadOnCloudinary = async (localFilePath)=>{
 
 }
 
+const deleteFromCloudinary = async (url)=>{
+    try {
+        const public_id=extractPublicIdFromCloudinary(url);
+        console.log("---40---public_id",public_id);
+        if(!public_id) {
+
+            return ` public_id not found  ------${public_id}`
+        };
+        //upload on cloudinary
+        const response=await cloudinary.uploader.destroy(public_id,
+            {resource_type:'image'}
+        )
+        ////file has been deleted
+        console.log(`uploadOnCloudinary---24---file has been deleted successfully`,response);
+
+        return response;
+    } catch (err) {
+    
+
+        console.error("deleteFromCloudinary---55---",err);
+        return null;
+        
+    }
+
+}
+
+const extractPublicIdFromCloudinary =(url)=>{
+    const public_id=url?.split("/")[url?.split("/")?.length-1]?.split(".")[0];
+
+    return public_id;
+};
 
 
-export {uploadOnCloudinary}
+
+export {
+    uploadOnCloudinary,
+    deleteFromCloudinary
+
+}
 
 
 // // Upload an image

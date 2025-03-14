@@ -2,10 +2,11 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import {User} from "../models/user.models.js"
 // import { upload } from "../middleware/multer.middleware.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import jwt from 'jsonwebtoken'
 import { env_file } from "../index_env.js";
+import { pipeline } from "stream";
 
 
 const generateAccessAndRefreshTokens =async (userId)=>{
@@ -288,7 +289,7 @@ const changeCurrentPassword =asyncHandler(async (req,res)=>{
 const getCurrentUser = asyncHandler(async(req,res)=>{
     return res
     .status(200)
-    .json(200,req.user,"current user fetched successfully")
+    .json(new ApiResponse(200,req.user,"current user fetched successfully"))
 })
 
 const updateAccountDetails= asyncHandler(async(req,res)=>{
@@ -315,7 +316,13 @@ return res
 })
 
 const updateUserAvatar=asyncHandler(async (req,res)=>{
+    
+    // console.log("updateUserAvatar--user-----",);
+    console.log("updateUserAvatar-------",req.user);
+    
+
     const avatarLocalPath=req.file?.path;
+    console.log("req.files",req.files,"req.file",req.file);
 
     if(!avatarLocalPath){
         throw new ApiError(400,"Avatar file is missing")
@@ -328,6 +335,8 @@ const updateUserAvatar=asyncHandler(async (req,res)=>{
 
     }
 
+    const oldUserAvatar=req?.user?.avatar;
+
     const user=await User.findByIdAndUpdate(req.user?._id,
         {
             $set:{
@@ -337,12 +346,143 @@ const updateUserAvatar=asyncHandler(async (req,res)=>{
         {new:true}
     ).select("-password")
 
+    const public_id=oldUserAvatar?.split("/")[oldUserAvatar?.split("/")?.length-1]?.split(".")[0];
+    const deletedAvatar =await deleteFromCloudinary(public_id);
+
+    console.log("deletedAvatar",deletedAvatar);
+
+
+
     return res
     .status(200)
     .json(
         new ApiResponse(200,user,"user avatar updated successfully")
     )
 
+})
+
+const getUserChannelProfile=asyncHandler(async (req,res)=>{
+    const {userName}=req.params;
+
+    if(!userName?.trim()){
+        throw new ApiError(400,"userName is missing")
+    }
+
+    const channel=await User.aggregate(
+        [
+            {
+                $match:{
+                    userName:userName?.toLowerCase(),
+                }
+            },
+            {
+                $lookup:{
+                    from:"subscriptions",
+                    localField:"_id",
+                    foreignField:"channel",
+                    as:"subscribers"
+                }
+            },
+            {
+                $lookup:{
+                    from:"subscriptions",
+                    localField:"_id",
+                    foreignField:"subscribers",
+                    as:"subscribedTo"
+                }
+            },
+            {
+                $addFields:{
+                    subscribersCount:{
+                        $size:"$subscribers"
+                    },
+                    channelsSubscribedToCount:{
+                        $size:"$subscribedTo"
+                    },
+                    isSubscribed:{
+                        $cond:{
+                            if:{
+                                $in:[req.user?._id,"$subscribers.subscriber"]
+                            },
+                            then:true,
+                            else:false
+                        }
+                    }
+                }
+            },
+            {
+                $project:{
+                    
+                    userName:1,
+                    subscribersCount:1,
+                    channelsSubscribedToCount:1,
+                    isSubscribed:1,
+                    avatar:1,
+                    email:1,
+                }
+            }
+            
+        ]
+    )
+    console.log(channel);
+    if(!channel?.length){
+        throw new ApiError(404,"channel does not exist")
+    }
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200,channel[0],"user channel fetched successfully")
+    )
+
+
+})
+
+const getWatchHistory=asyncHandler(async (req,res)=>{
+    const user=await User.aggregate([
+        {
+            $match:{
+                _id: new mongoose.Types.ObjectId(req.user._id)
+            }
+        },
+        {
+            $lookup:{
+                from:"videos",
+                localField:"watchHistory",
+                foreignField:"_id",
+                as:"watchHistory",
+                pipeline:[
+                    {
+                        $lookup:{
+                            from:"users",
+                            localField:"owner",
+                            foreignField:"_id",
+                            as:"owner",
+                            pipeline:[
+                                {
+                                    $project:{
+                                        userName:1,
+                                        avatar:1,
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $addFields:{
+                            owner:{
+                                $first:"$owner",
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ]);
+
+    return res
+    .status(200)
+    .json(200,user[0].watchHistory,"watch history fetched successfully")
 })
 
 
@@ -355,5 +495,7 @@ export {
     changeCurrentPassword,
     getCurrentUser,
     updateAccountDetails,
-    updateUserAvatar
+    updateUserAvatar,
+    getUserChannelProfile,
+    getWatchHistory
 }
