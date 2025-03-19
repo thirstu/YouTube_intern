@@ -9,7 +9,8 @@ const router = Router();
 router.use(verifyJWT);
 
 
-router.route("/watch-history").get(verifyJWT,getChannelStats);
+router.route("/stats/:channelId").get(getChannelStats);
+router.route("/videos/:channelId").get(getChannelVideos);
 
 
 

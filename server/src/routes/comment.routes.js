@@ -12,10 +12,10 @@ const router = Router();
 router.use(verifyJWT);
 
 
-router.route("/comment/:videoId").get(getVideoComments);
-router.route("/add-comments").post(upload.none(),addComment);
-router.route("/update-comments").post(upload.none(),updateComment);
-router.route("/delete-comments").post(upload.none(),deleteComment);
+router.route("/add-comments/:videoId").post(upload.none(),addComment);
+router.route("/comments/:videoId").get(getVideoComments);
+router.route("/update-comments/:commentId").post(upload.none(),updateComment);
+router.route("/delete-comments/:commentId").get(deleteComment);
 
 
 export default router;

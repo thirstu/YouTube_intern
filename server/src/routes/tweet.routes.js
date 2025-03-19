@@ -8,7 +8,10 @@ const router = Router();
 router.use(verifyJWT);
 
 
-router.route("/delete-from-cloudinary").post(upload.none(),createTweet);
+router.route("/create").post(upload.none(),createTweet);
+router.route("/get").get(getUserTweets);
+router.route("/update/:tweetId").post(upload.none(),updateTweet);
+router.route("/delete/:tweetId").get(deleteTweet);
 
 
 export default router;

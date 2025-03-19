@@ -16,7 +16,10 @@ const messageSchema = new Schema(
       enum: ["text", "image", "video", "file", "audio"],
       default: "text",
     },
-    mediaUrl: {
+    mediaFile: {
+      type: String,
+    }, 
+    file: {
       type: String,
     },
     timestamp: {
@@ -78,7 +81,7 @@ const chatRoomSchema = new Schema(
         ref: "User",
       },
     
-    roomId: {
+    roomKey: {
       type: String,
       unique: true,
     },
@@ -100,10 +103,10 @@ const chatRoomSchema = new Schema(
         type: Schema.Types.ObjectId,
         ref: "User",
       },
-      content: { 
-        type: Schema.Types.ObjectId,
-        ref: "Message",
-      },
+      // content: { 
+      //   type: Schema.Types.ObjectId,
+      //   ref: "Message",
+      // },
       timestamp: { type: Date, default: Date.now },
     },
     roomType: { type: String, enum: ["group", "private", "public"], default: "private" },

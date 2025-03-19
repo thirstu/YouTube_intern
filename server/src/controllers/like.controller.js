@@ -31,19 +31,20 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
 })
 
 const toggleCommentLike = asyncHandler(async (req, res) => {
+    console.log("toggleCommentLike");
     const {commentId} = req.params
     const user=req.user;
     //TODO: toggle like on comment
-    const likeExist=await Comment.findOne({comment:commentId,likedBy:user});
+    const likeExist=await Like.findOne({comment:commentId,likedBy:user});
 
     if(likeExist){
-        const deletedLike=await Comment.findByIdAndDelete(likeExist._id);
+        const deletedLike=await Like.findByIdAndDelete(likeExist._id);
 
         return res
         .status(200)
         .json(new ApiResponse(200,deletedLike,"unliked comment successfully"))
     }else{
-        const createdLike=await Comment.create({comment:commentId,likedBy:user});
+        const createdLike=await Like.create({comment:commentId,likedBy:user});
 
         return res
         .status(200)
@@ -76,7 +77,7 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
 const getLikedVideos = asyncHandler(async (req, res) => {
     const user=req.user;
     //TODO: get all liked videos
-    const likedVideos = await Like.find(user._id);
+    const likedVideos = await Like.find({likedBy:user._id}).populate("video");
 
 
     return res

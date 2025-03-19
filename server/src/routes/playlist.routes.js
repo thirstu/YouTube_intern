@@ -9,7 +9,13 @@ router.use(verifyJWT);
 
 
 
-router.route("/delete-from-cloudinary").post(upload.none(),addVideoToPlaylist);
+router.route("/create").post(upload.none(),createPlaylist);
+router.route("/add-video/:videoId").get(upload.none(),addVideoToPlaylist);
+router.route("/get/:playlistId").get(getPlaylistById);
+router.route("/get-playlists").get(getUserPlaylists);
+router.route("/update/:playlistId").post(upload.none(),updatePlaylist);
+router.route("/remove-video/:videoId").get(upload.none(),removeVideoFromPlaylist);
+router.route("/delete/:playlistId").get(upload.none(),deletePlaylist);
 
 
 export default router;

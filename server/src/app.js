@@ -38,6 +38,7 @@ import  dashboard  from './routes/dashboard.routes.js';
 import  healthCheck  from './routes/health.routes.js';
 
 import  like  from './routes/like.routes.js';
+import  chat  from './routes/chat.routes.js';
 import  playlist  from './routes/playlist.routes.js';
 import  subscription  from './routes/subscription.routes.js';
 import  tweet  from './routes/tweet.routes.js';
@@ -52,6 +53,7 @@ app.use("/api/v1/dashboard",dashboard)
 app.use("/api/v1/health",healthCheck)
 app.use("/api/v1/healthCheck",healthCheck)
 app.use("/api/v1/like",like)
+app.use("/api/v1/chat",chat)
 app.use("/api/v1/playlist",playlist)
 app.use("/api/v1/subscription",subscription)
 app.use("/api/v1/tweet",tweet)

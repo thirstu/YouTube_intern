@@ -1,19 +1,22 @@
 import mongoose, {isValidObjectId} from "mongoose"
 // import {User} from "../models/user.model.js"
 // import { Subscription } from "../models/subscription.model.js"
-// import { ApiError } from "../utils/apiError.js"
-// import { ApiResponse } from "../utils/apiResponse.js"
+import { ApiError } from "../utils/apiError.js"
+import { ApiResponse } from "../utils/apiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
 import {Subscription} from "../models/subscription.models.js"
 
 const toggleSubscription = asyncHandler(async (req, res) => {
+    console.log("hello");
     const user = req.user;
-    const {channelId} = req.params
+    const {channelId} = req.params;
     // TODO: toggle subscription
     const subscriberExist=await Subscription.find({subscriber:user._id, channel:channelId});
+    console.log("user",subscriberExist,channelId);
 
-    if(subscriberExist){
-        const subscription=await Subscription.findByIdAndDelete(subscriberExist._id);
+    if(subscriberExist.length > 0) {
+        const subscription=await Subscription.findOneAndDelete({subscriber:subscriberExist[0].
+            subscriber,channel:channelId});
 
         return res
         .status(200)
@@ -33,7 +36,7 @@ const toggleSubscription = asyncHandler(async (req, res) => {
 // controller to return subscriber list of a channel
 const getUserChannelSubscribers = asyncHandler(async (req, res) => {
     const {channelId} = req.params;
-    const subscribers=await Subscription.find(channelId);
+    const subscribers=await Subscription.find({channel:channelId});
 
     return res
     .status(200)
@@ -44,7 +47,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
 const getSubscribedChannels = asyncHandler(async (req, res) => {
     const { subscriberId } = req.params;
 
-    const channels=await Subscription.find(subscriberId);
+    const channels=await Subscription.find({subscriber:subscriberId});
 
     return res
     .status(200)

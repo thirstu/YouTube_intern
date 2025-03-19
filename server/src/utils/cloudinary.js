@@ -35,7 +35,7 @@ const uploadOnCloudinary = async (localFilePath)=>{
 
 }
 
-const deleteFromCloudinary = async (url)=>{
+const deleteFromCloudinary = async (url,resource_type="image")=>{
     try {
         const public_id=extractPublicIdFromCloudinary(url);
         console.log("---40---public_id",public_id);
@@ -45,7 +45,7 @@ const deleteFromCloudinary = async (url)=>{
         };
         //upload on cloudinary
         const response=await cloudinary.uploader.destroy(public_id,
-            {resource_type:'image'}
+            {resource_type:resource_type}
         )
         ////file has been deleted
         console.log(`uploadOnCloudinary---24---file has been deleted successfully`,response);

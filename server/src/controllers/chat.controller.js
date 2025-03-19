@@ -1,208 +1,445 @@
-import { Chat } from "../models/chat.models";
-import { Message } from "../models/chat.models";
-import {  uploadOnCloudinary,
-    deleteFromCloudinary} from "../utils/cloudinary.js";
-    import {verifyJWT} from "../middleware/auth.middleware.js";
-    import { User } from "../models/user.models.js";
-    import { asyncHandler } from "../utils/asyncHandler.js";
-import { v4 as uniqueId4 } from 'uuid';
-import {useState} from 'react';
+import { Chat } from "../models/chat.models.js";
+import {
+  uploadOnCloudinary,
+  deleteFromCloudinary,
+} from "../utils/cloudinary.js";
+import { verifyJWT } from "../middleware/auth.middleware.js";
+import { User } from "../models/user.models.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { v4 as uniqueId4 } from "uuid";
+import { useState } from "react";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 
+const createRoom = asyncHandler(async (req, res) => {
+  try {
+    console.log("hello");
+    const user = req.user._id;
+    const { name, roomType, password } = req.body;
+    const uniqueId = uniqueId4();
 
-    const createRoom=  asyncHandler(async (req,res)=>{
-      try {
-          const user = req.user._id;
-          const {name ,roomType,password,}=req.body;
-          const [uniqueId,setUniqueId]=useState(roomId); 
-  
-          if(!user||!name){
-  
-              return res
-              .status(400)
-              .json(new ApiError(400,"Name and creator are required"))
-  
-          }
-          let hashedPassword=null;
-          // if(roomType === "private" && password){
-          //     hashedPassword = 
-          // }
-      
-          if(!roomId)return setUniqueId(uniqueId4());
-          
-  
-          
-          const newRoom = await Chat.create({
-              createdBy:user,
-              name: name,
-              roomId: uniqueId,
-              participants:[user],
-              password: password?password:null,
-              roomType: roomType||"private",
-          })
-  
-  
-          return res
-          .status(200)
-          .json(new ApiResponse(200,newRoom,"room created successfully"))
-      } catch (err) {
-        console.error("Error creating room:", err);
-        return res.status(500).json(new ApiError(500, "Internal Server Error createRoom --51-- " ));
-      }
-
-    });
-
-    const joinRoom=  asyncHandler(async (req,res)=>{
-        const user = req.user._id;
-        const {roomId}=req.body;
-
-        const userExist= await User.findById(user);
-
-
-        if(!userExist)return  res
+    if (!user || !name) {
+      return res
         .status(400)
-        .json(new ApiError(400,"user does not exist"))
-        
-
-    const roomExist = await Chat.find(roomId);
-    if (!roomExist) {
-        return res.status(404).json(new ApiError(404, "Room not found"));
+        .json(new ApiError(400, "Name and creator are required"));
     }
+    let hashedPassword = null;
+    // if(roomType === "private" && password){
+    //     hashedPassword =
+    // }
 
+    // if(!roomKey)return setUniqueId(uniqueId4());
 
-        const addUser=await Chat.findOneAndUpdate({roomId},{
-        $addToSet:{participants:user}
-        },{new:true,runValidators:true}) 
-
-        return  res
-        .status(200)
-        .json(new ApiResponse(200,addUser,"user added to the room  successfully"))
-
-
-
-
+    const newRoom = await Chat.create({
+      createdBy: user,
+      name: name,
+      roomKey: uniqueId,
+      participants: [{ user, role: "admin" }],
+      password: password ? password : null,
+      roomType: roomType || "private",
     });
 
-    const grantPermission=  asyncHandler(async (req,res)=>{
-        const user=req.user._id;
-        const {chatRoomId}=req.params;
+    return res
+      .status(200)
+      .json(new ApiResponse(200, newRoom, "room created successfully"));
+  } catch (err) {
+    console.error("Error creating room:", err);
+    return res
+      .status(500)
+      .json(new ApiError(500, "Internal Server Error createRoom --51-- "));
+  }
+});
 
-        ////add key string (co leader) to the user inside participants array list
-        const chatRoom=await Chat.findOneAndUpdate({
-            _id:chatRoomId,
-            "participants.user":user,
-            "participants.role": { $ne: "admin" }
-        },{
-            $set:{"participants.$.role":"co-leader"}
+const joinRoom = asyncHandler(async (req, res) => {
+  console.log("hello");
+  const user = req.user._id;
+  const { roomKey } = req.body;
 
-        },{new:true,runValidators:true})
+  const room = await Chat.findOne({ roomKey, "participants.user": user });
 
-        if(!chatRoom){
-            return res.status(404).json(new ApiError(404, "User not found in chat room"));
-        }
+  if (room) {
+    return res.status(400).json({ message: "User already exists in room" });
+  }
 
-        return res.status(200).json(new ApiResponse(200, chatRoom, "Permission granted successfully"));
+  const roomExist = await Chat.find({ roomKey });
+  if (!roomExist) {
+    return res.status(404).json(new ApiError(404, "Room not found"));
+  }
 
-    });
+  const addUser = await Chat.findOneAndUpdate(
+    { roomKey },
+    {
+      $addToSet: { participants: { user } },
+    },
+    { new: true, runValidators: true },
+  );
 
-    const revokePermission=  asyncHandler(async (req,res)=>{
-        const user=req.user._id;
-        const {chatRoomId}=req.params;
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, addUser, "user added to the room  successfully"),
+    );
+});
 
-        const chatRoom=await Chat.findOneAndUpdate({
-            _id:chatRoomId,
-            "participants.user":user,
-            "participants.role": { $ne: "admin" }
-        },{
-            $set:{"participants.$.role":"member"}
+const grantPermission = asyncHandler(async (req, res) => {
+  const admin = req.user._id;
+  // const {userIdToUpdate}=req.query;
+  const { chatRoomId, userIdToUpdate } = req.params;
+  console.log(admin, chatRoomId, userIdToUpdate);
 
-        },{new:true,runValidators:true});
+  ////add key string (co leader) to the user inside participants array list
+  const chatRoom = await Chat.findOne({
+    _id: chatRoomId,
+    "participants.user": admin,
+    "participants.role": { $in: ["admin", "co-leader"] },
+  });
 
-        if(!chatRoom){
-            return res.status(404).json(new ApiError(404, "User not found in chat room"));
-        }
+  console.log("chatRoom", chatRoom);
 
-        return res.status(200).json(new ApiResponse(200, chatRoom, "Permission removed successfully"));
+  if (!chatRoom) {
+    return res
+      .status(404)
+      .json(
+        new ApiError(
+          404,
+          "Unauthorized: Only an admin or co-leader can update roles",
+        ),
+      );
+  }
 
-    }); 
+  const updatedUser = await Chat.findOneAndUpdate(
+    {
+      _id: chatRoomId,
+      participants: {
+        $elemMatch: {
+          user: userIdToUpdate,
+          role: { $ne: "admin" },
+        },
+      },
+    },
+    {
+      $set: { "participants.$.role": "co-leader" },
+    },
+    { new: true, runValidators: true },
+  );
 
-    const removeUsers=  asyncHandler(async (req,res)=>{
-        const user=req.user._id;
-        const {chatRoomId}=req.params;
+  console.log("updatedUser", updatedUser);
 
-        const requestingUser = await Chat.findOne({ 
-            _id: chatRoomId, 
-            "participants.user": user,
-            "participants.role": "admin" 
-        });
-        
-        if (!requestingUser) {
-            return res.status(400).json(new ApiError(403, "Only admins can remove users"));
-        }
+  if (!updatedUser) {
+    return res
+      .status(400)
+      .json(new ApiError(400, {}, "User not found or already an admin."));
+  }
 
-        const chatRoom=await Chat.findOneAndUpdate({
-            _id:chatRoomId,
-            "participants.user":user,
-            "participants.role": { $ne: "admin" }
-        },{
-            $pull:{participants:{user:user}}
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedUser, "Permission granted successfully"));
+});
 
-        },{new:true,runValidators:true});
-
-        if(!chatRoom){
-            return res.status(404).json(new ApiError(404, "User not found in chat room"));
-        }
-
-        return res.status(200).json(new ApiResponse(200, chatRoom, "user removed successfully"));
-
-    });
+const revokePermission = asyncHandler(async (req, res) => {
+  const admin = req.user._id;
+  // const {userIdToUpdate}=req.query;
+  const { chatRoomId, userIdToUpdate } = req.params;
+  console.log(admin, chatRoomId, userIdToUpdate);
 
 
+  const userHavePermission = await Chat.findOne({
+    _id: chatRoomId,
+    "participants.user": userIdToUpdate,
+    "participants.role": { $in: [ "co-leader"] },
+  });
+
+  console.log("userHavePermission", userHavePermission);
+
+  if (!userHavePermission) {
+    return res
+      .status(404)
+      .json(
+        new ApiError(
+          404,
+          {},
+          "user  already does not have  co-leader permissions",
+        ),
+      );
+  }
+
+  ////add key string (co leader) to the user inside participants array list
+  const chatRoom = await Chat.findOne({
+    _id: chatRoomId,
+    "participants.user": admin,
+    "participants.role": { $in: ["admin", "co-leader"] },
+  });
+
+  console.log("chatRoom", chatRoom);
+
+  if (!chatRoom) {
+    return res
+      .status(404)
+      .json(
+        new ApiError(
+          404,
+          {},
+          "Unauthorized: Only an admin or co-leader can update roles",
+        ),
+      );
+  }
 
 
 
+  const updatedUser = await Chat.findOneAndUpdate(
+    {
+      _id: chatRoomId,
+      participants: {
+        $elemMatch: {
+          user: userIdToUpdate,
+          role: { $ne: "admin" },
+        },
+      },
+    },
+    {
+      $set: { "participants.$.role": "member" },
+    },
+    { new: true, runValidators: true },
+  );
+
+  console.log("updatedUser", updatedUser);
+
+  if (!updatedUser) {
+    return res
+      .status(400)
+      .json(new ApiError(400, {}, "User not found or already an demoted."));
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedUser, "Permission revoked successfully"));
+});
+
+const removeUsers = asyncHandler(async (req, res) => {
+  console.log("hello");
+  const admin = req.user._id;
+  // const {userIdToUpdate}=req.query;
+  const { chatRoomId, userIdToBeRemoved } = req.params;
+  console.log(admin, chatRoomId, userIdToBeRemoved);
+
+  const userExist = await Chat.findOne({
+    _id: chatRoomId,
+    "participants.user": userIdToBeRemoved,
     
-    const getAllRoomsListUserIsPartOf=  asyncHandler(async (req,res)=>{
-        const user=req.user._id;
-        // const {chatRoomId}=req.params;
+  });
 
-        const chatRoomList=await Chat.find({
-            
-            "participants.user":user,
-            
-        }).select("-messages").lean();
+  console.log("chatRoom", userExist);
 
-        if(!chatRoomList.length){
-            return res.status(404).json(new ApiError(404, "User not found in any chat room"));
-        }
+  if (!userExist) {
+    return res
+      .status(404)
+      .json(
+        new ApiError(
+          404,
+          {},
+          "user does not exist",
+        ),
+      );
+  }
+  ////add key string (co leader) to the user inside participants array list
+  const chatRoom = await Chat.findOne({
+    _id: chatRoomId,
+    "participants.user": admin,
+    "participants.role": { $in: ["admin","co-leader"] },
+  });
 
-        return res.status(200).json(new ApiResponse(200, chatRoomList, "chat room lists user is part of fetched successfully"));
+  console.log("chatRoom", chatRoom);
 
-    });
+  if (!chatRoom) {
+    return res
+      .status(404)
+      .json(
+        new ApiError(
+          404,
+          {},
+          "Unauthorized: Only an admin or co-leader can remove users",
+        ),
+      );
+  }
 
-    const sendMessage=  asyncHandler(async (req,res)=>{
-        
+  const updatedUser = await Chat.findOneAndUpdate(
+    {
+      _id: chatRoomId,
+      participants: {
+        $elemMatch: {
+          user: userIdToBeRemoved,
+          role: { $ne: "admin" },
+        },
+      },
+    },
+    {
+      $pull: { "participants": {user:userIdToBeRemoved} },
+    },
+    { new: true, runValidators: true },
+  );
 
-    });
+  console.log("updatedUser", updatedUser);
 
-    const uploadMediaFile=  asyncHandler(async (req,res)=>{
-        
+  if (!updatedUser) {
+    return res
+      .status(400)
+      .json(new ApiError(400, {}, "User not found or already removed."));
+  }
 
-    });
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedUser, "removed successfully"));
+});
 
-    const uploadDocument=  asyncHandler(async (req,res)=>{
-        
+const getAllRoomsListUserIsPartOf = asyncHandler(async (req, res) => {
+  const user = req.user._id;
+  // const {chatRoomId}=req.params;
 
-    });
+  const chatRoomList = await Chat.find({
+    "participants.user": user,
+  })
+    .select("-messages -password")
+    .lean();
 
+  if (!chatRoomList.length) {
+    return res
+      .status(404)
+      .json(new ApiError(404, "User not found in any chat room"));
+  }
 
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        chatRoomList,
+        "chat room lists of which user is part of  is fetched successfully",
+      ),
+    );
+});
 
+const sendMessage = asyncHandler(async (req, res) => {
+  const user = req.user._id;
+  const { content, roomKey } = req.body;
 
+  const chatRoomUsers = await Chat.findOne({
+    _id: roomKey,
+    "participants.user": user,
+  });
 
+  if (!chatRoomUsers) {
+    return res
+      .status(404)
+      .json(new ApiError(404, "Users not found in chat room"));
+  }
 
+  const deliveredTo = chatRoomUsers.participants
+    .map((p) => p.user.toString())
+    .filter((id) => id !== user.toString());
 
-    /**
+  if (!userExist) {
+    return res
+      .status(404)
+      .json(new ApiError(404, "User not found in chat room"));
+  }
+
+  const createMessage = await Message.create({
+    sender: user,
+    content: content,
+    deliveredTo: deliveredTo,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, createMessage, "Message sent successfully"));
+});
+
+const uploadMediaFile = asyncHandler(async (req, res) => {
+  const user = req.user._id;
+  const { roomKey } = req.params;
+  const { mediaFile } = req.body;
+
+  const chatRoomUsers = await Chat.findOne({
+    _id: roomKey,
+    "participants.user": user,
+  });
+
+  if (!chatRoomUsers) {
+    return res
+      .status(404)
+      .json(new ApiError(404, "Users not found in chat room"));
+  }
+
+  const deliveredTo = chatRoomUsers.participants
+    .map((p) => p.user.toString())
+    .filter((id) => id !== user.toString());
+
+  if (!userExist) {
+    return res
+      .status(404)
+      .json(new ApiError(404, "User not found in chat room"));
+  }
+
+  const createMessage = await Message.create({
+    sender: user,
+    mediaFile: mediaFile,
+    deliveredTo: deliveredTo,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, mediaFile, "file sent successfully"));
+});
+
+const uploadDocument = asyncHandler(async (req, res) => {
+  const user = req.user._id;
+  const { file, roomKey } = req.body;
+
+  const chatRoomUsers = await Chat.findOne({
+    _id: roomKey,
+    "participants.user": user,
+  });
+
+  if (!chatRoomUsers) {
+    return res
+      .status(404)
+      .json(new ApiError(404, "Users not found in chat room"));
+  }
+
+  const deliveredTo = chatRoomUsers.participants
+    .map((p) => p.user.toString())
+    .filter((id) => id !== user.toString());
+
+  if (!userExist) {
+    return res
+      .status(404)
+      .json(new ApiError(404, "User not found in chat room"));
+  }
+
+  const createMessage = await Message.create({
+    sender: user,
+    file: file,
+    deliveredTo: deliveredTo,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, mediaFile, "file sent successfully"));
+});
+
+export {
+  createRoom,
+  joinRoom,
+  grantPermission,
+  revokePermission,
+  removeUsers,
+  getAllRoomsListUserIsPartOf,
+  sendMessage,
+  uploadMediaFile,
+  uploadDocument,
+};
+
+/**
      * 
      * 
      * 

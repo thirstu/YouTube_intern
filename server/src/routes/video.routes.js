@@ -9,7 +9,21 @@ router.use(verifyJWT);
 
 
 
-router.route("/delete-from-cloudinary").post(upload.none(),getAllVideos);
+router.route("/upload").post(upload.fields([
+    {
+        name:"videoFile",
+        maxCount:1,
+    },
+    {
+        name:"thumbnail",
+        maxCount:1,
+    }
+    ]),publishAVideo);
+router.route("/video/:videoId").get(getVideoById);
+router.route("/all-videos?").get(getAllVideos);
+router.route("/toggle/:videoId").get(togglePublishStatus);
+router.route("/update/:videoId").post(upload.single("thumbnail"),updateVideo);
+router.route("/delete/:videoId").get(deleteVideo);
 
 
 export default router;

@@ -9,7 +9,9 @@ router.use(verifyJWT);
 
 
 
-router.route("/delete-from-cloudinary").post(upload.none(),getSubscribedChannels);
+router.route("/toggle/:channelId").get(toggleSubscription);
+router.route("/channels/:subscriberId").get(getSubscribedChannels);
+router.route("/subscribers/:channelId").get(getUserChannelSubscribers);
 
 
 export default router;
