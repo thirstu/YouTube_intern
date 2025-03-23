@@ -1,7 +1,11 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from "cookie-parser"
+import Stripe from "stripe";
 
+
+
+const stripe=Stripe(process.env.STRIPE_SECRET_KEY);
 const app=express();
 
 app.use(cors({
@@ -38,13 +42,15 @@ import  dashboard  from './routes/dashboard.routes.js';
 import  healthCheck  from './routes/health.routes.js';
 
 import  like  from './routes/like.routes.js';
-import  chat  from './routes/chat.routes.js';
+import  chat  from './routes/chatRoom.routes.js';
 import  playlist  from './routes/playlist.routes.js';
 import  subscription  from './routes/subscription.routes.js';
 import  tweet  from './routes/tweet.routes.js';
 import userRouter
 from './routes/user.routes.js'
 import  video  from './routes/video.routes.js';
+import  premium  from './routes/premium.routes.js';
+import  payment  from './routes/payment.routes.js';
 
 
 /////routes declarations
@@ -59,9 +65,11 @@ app.use("/api/v1/subscription",subscription)
 app.use("/api/v1/tweet",tweet)
 app.use("/api/v1/users",userRouter)
 app.use("/api/v1/video",video)
+app.use("/api/v1/premium",premium)
+app.use("/api/v1/payment",payment)
 
 
 
 ////http://localhost:8000/api/v1/users/register
 
-export {app}
+export {app,stripe}

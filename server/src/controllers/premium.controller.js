@@ -9,6 +9,8 @@ const razorpay = new Razorpay({
   });
 import nodemailer from "nodemailer";
 import Razorpay from "razorpay";
+import { User } from "../models/user.models.js";
+import { Premium } from "../models/premium.models.js";
 
 const downloadVideo=asyncHandler(async (req,res)=>{
     const userId=req.user._id;
@@ -69,10 +71,17 @@ const makePaymentRequest = asyncHandler(async (req, res) => {
 const updateUserPlan=asyncHandler(async (req, res) => {
     const {order_Id,razorpay_payment_id,plan}=req.body;
 
-    const user=await User.findById(req.user?._id);
+    const user=await Premium.findById(req.user?._id);
 
     await sendPurchaseInvoice(req.body={email:user.email,plan,price:(()=>plan === "Bronze" ? 10 : plan === "Silver" ? 50 : 100)()})
 
     res.json({success:true});
 
 })
+
+export {
+    downloadVideo,
+    sendPurchaseInvoice,
+    makePaymentRequest,
+    updateUserPlan,
+}
