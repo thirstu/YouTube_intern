@@ -5,7 +5,7 @@ import Stripe from "stripe";
 
 
 
-const stripe=Stripe(process.env.STRIPE_SECRET_KEY);
+// const stripe=Stripe(process.env.STRIPE_SECRET_KEY);
 const app=express();
 
 app.use(cors({
@@ -85,4 +85,4 @@ app.use("/api/v1/payment",payment)
 //     });
 //   });
 
-export {app,stripe}
+export {app}
