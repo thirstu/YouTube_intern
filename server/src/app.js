@@ -71,5 +71,18 @@ app.use("/api/v1/payment",payment)
 
 
 ////http://localhost:8000/api/v1/users/register
+// app.use((err, req, res, next) => {
+//     console.error("Global Error Middleware:", err); // Debugging
+  
+//     const statusCode = err.statusCode || 500;
+//     const message = err.message || "Internal Server Error";
+  
+//     res.status(statusCode).json({
+//       success: false,
+//       message,
+//       errors: err.errors || [],
+//       data: err.data || null,
+//     });
+//   });
 
 export {app,stripe}

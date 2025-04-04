@@ -5,27 +5,51 @@ import Navbar from './components/navbar/Navbar.jsx';
 import LeftSide from './components/leftSide/LeftSide.jsx';
 import Category_Tablist from './components/tablist/Category_Tablist.jsx';
 import Item from './components/items/Item.jsx';
-import Home_Page from './pages/home_page/Home_page.jsx';
+
+// import Home_Page from './pages/home_page/Home_page.jsx';
 import axios, {isCancel, AxiosError} from 'axios';
+
 import { Outlet } from 'react-router-dom';
+import { getAllVideos } from './api/video.api.js';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout, refreshAccess } from './reducers/users.reducer.js';
+import Cookies from "js-cookie"
+import { allVideos } from './reducers/video.reducer.js';
+import { getUserPlays } from './reducers/playlist.reducer.js';
+
 function App() {
   // const response=async()=>{
   //   axios.get('/http://localhost:5173').then(res=>{
   //     console.log(res);
   //   }).catch(err=>console.error(err)).finally((a)=>a)
   // }
-  const [count, setCount] = useState(0)
-  const [res, setRes] = useState([])
-  const left_side_active=document.getElementsByClassName("leftSide_drawer_container")[0]
+  const {accessToken}=useSelector(state=>{
+    console.log(state);
+    return state.user
+  })
+  const dispatch = useDispatch();
+  const [count, setCount] = useState(0);
+  const [res, setRes] = useState([]);
+  const left_side_active=document.getElementsByClassName("leftSide_drawer_container")[0];
 
 
   useEffect(()=>{
-    axios.get('/api/').then(res=>{
-      setRes(res);
-      console.log(res);
-    }).catch(err=>console.error(err))
-  },[])
-  console.log(res);
+       // 🔄 Auto refresh access token when the app loads
+       const token = Cookies.get();
+       console.log(!accessToken);
+
+       if (!accessToken&&token) {
+           dispatch(refreshAccess());
+       }
+       dispatch(allVideos());
+       dispatch(getUserPlays());
+
+       //////////////////////////////////////////
+       //////////////////////////////////////////
+       //////////////////////////////////////////
+ 
+  },[dispatch])
+  // console.log(res);
   return (
     <>
     <div className='app_container'>

@@ -1,0 +1,35 @@
+
+.auth_page_container{
+    /* height: 60rem; */
+    /* width: 50rem; */
+    /* position: absolute; */
+    /* left: 50%; */
+    /* top: 50%; */
+    background-color: rgb(33, 168, 168);
+    z-index: 99;
+}
+
+/* #login {
+    display: flex;
+    background-color: brown;
+    flex-direction: column;
+}
+
+
+ #signup{
+    display: flex;
+    flex-direction: column;
+}  */
+form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+ .active{
+    display: none;
+} 
+input{
+    max-width: 30rem;
+}

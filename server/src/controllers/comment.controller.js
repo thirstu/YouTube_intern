@@ -8,12 +8,14 @@ import { Comment } from "../models/comment.models.js";
 
 const addComment = asyncHandler(async (req, res) => {
     // TODO: add a comment to a video
-    const {videoId} = req.params
+    const {videoId} = req.params;
+
 
     const user=req.user;
     const {content}=req.body;
+    
 
-    console.log(videoId, content,user);
+    console.log(videoId, "----",content,"----",user,"----",req.body);
 
     const comment=await  Comment.create({
         content:content,

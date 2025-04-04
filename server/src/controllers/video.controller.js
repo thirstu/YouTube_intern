@@ -61,7 +61,7 @@ const getVideoById = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200,video,"fetched video successfully"));
 });
 
-const getAllVideos = asyncHandler(async (req, res) => {
+const getUsersAllVideos = asyncHandler(async (req, res) => {
     /**
      * $regex (Regular Expression) is used in MongoDB to search for text patterns inside string fields.
     It allows partial matching instead of requiring an exact match.
@@ -94,6 +94,22 @@ const getAllVideos = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200,allVideos," fetched all videos successfully"));
     
     })
+
+    const getAllVideos = asyncHandler(async (req, res) => {
+   
+    
+            const { page = 1, limit = 30, query, sortBy, sortType, category } = req.query;
+        
+        
+            const skip = (page -1)*30
+            //TODO: get all videos based on query, sort, pagination
+            const allVideos =await Video.find({}).sort({[sortBy]:sortType === "desc" ? -1:1}).skip(skip).limit(parseInt(limit));
+        
+            return res
+            .status(200)
+            .json(new ApiResponse(200,allVideos," fetched all videos successfully"));
+        
+        })
     
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
@@ -112,51 +128,48 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200,updateVideoStatus,"toggled isPublished status successfully"));
 })
 const updateVideo = asyncHandler(async (req, res) => {
-    const user =req.user;
+    console.log("server updateVideo");
+    const user = req.user;
     const { videoId } = req.params;
-    const { title, description} = req.body
-    const thumbnail=req.file;
-    //TODO: update video details like title, description, thumbnail
+    const { title, description } = req.body;
+    const thumbnail = req.file;
 
-    console.log(videoId,title, description,thumbnail);
-    const oldVideo=await Video.findById(videoId);
-
-    const oldThumbnail=oldVideo.thumbnail;
-
-    const uploadThumbnail=await uploadOnCloudinary(thumbnail.path);
-
-    if(!uploadThumbnail){
-        return res
-    .status(200)
-    .json(new ApiError(200,uploadThumbnail,"uploadThumbnail not found"));
+    const oldVideo = await Video.findById(videoId);
+    if (!oldVideo) {
+        return res.status(404).json(new ApiError(404, null, "Video not found"));
     }
 
-console.log(uploadThumbnail);
+    let updatedFields = {};
 
-    const updateVideo=await Video.findByIdAndUpdate(videoId,{
-        $set:{
-            title: title,
-            description: description,
-            thumbnail: uploadThumbnail.url,
+    if (title) updatedFields.title = title;
+    if (description) updatedFields.description = description;
+
+    if (thumbnail) {
+        // Upload new thumbnail
+        const uploadThumbnail = await uploadOnCloudinary(thumbnail.path);
+
+        if (!uploadThumbnail) {
+            return res.status(500).json(new ApiError(500, null, "Failed to upload thumbnail"));
         }
-    },{new:true, runValidators:true})
 
-    console.log(updateVideo);
+        // Save new thumbnail URL
+        updatedFields.thumbnail = uploadThumbnail.url;
 
-
-    if(!updateVideo){
-        return res
-    .status(200)
-    .json(new ApiError(200,updateVideo,"video not found"));
+        // Delete old thumbnail
+        const oldThumbnailRemoved = await deleteFromCloudinary(oldVideo.thumbnail);
+        console.log("Old thumbnail removed:", oldThumbnailRemoved);
     }
 
-    const oldThumbnailRemoved=await deleteFromCloudinary(oldThumbnail);
-    console.log(oldThumbnailRemoved);
+    const updatedVideo = await Video.findByIdAndUpdate(
+        videoId,
+        { $set: updatedFields },
+        { new: true, runValidators: true }
+    );
 
     return res
-    .status(200)
-    .json(new ApiResponse(200,updateVideo,"updated video successfully"));
-})
+        .status(200)
+        .json(new ApiResponse(200, updatedVideo, "Updated video successfully"));
+});
 
 
 const deleteVideo = asyncHandler(async (req, res) => {
@@ -184,5 +197,6 @@ export {
     getVideoById,
     updateVideo,
     deleteVideo,
-    togglePublishStatus
+    togglePublishStatus,
+    getUsersAllVideos,
 }

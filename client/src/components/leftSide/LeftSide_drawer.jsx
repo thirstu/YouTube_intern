@@ -73,7 +73,7 @@ const LeftSide_drawer = () => {
         </div>
         <div className=" left_item_container">
           <MdOutlinePlaylistPlay className="left_icons" />
-          <span className="greater"> <Link to={`/watchHistory`}>Playlists</Link></span>
+          <span className="greater"> <Link to={`/playlist`}>Playlists</Link></span>
         </div>
         <div className=" left_item_container">
           <CiYoutube className="left_icons" />

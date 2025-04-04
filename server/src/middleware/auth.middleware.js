@@ -11,6 +11,7 @@ export const verifyJWT = asyncHandler(async(req,res,next)=>{
    try {
     // console.log(req);
      const token=req.cookies?.accessToken||req.header("Authorization")?.replace("Bearer ","");
+     console.log("req.cookies?.accessToken",req.cookies?.accessToken,req.header("Authorization")?.replace("Bearer ",""));
      console.log("---30---verifyJWT----7--token----middleware",Object.keys({}).length===0);
  
 
@@ -27,6 +28,7 @@ export const verifyJWT = asyncHandler(async(req,res,next)=>{
      }
  
      req.user = user;
+     console.log("jwt everything is fine");
      next();
    } catch (err) {
     if (err.name === "TokenExpiredError") {

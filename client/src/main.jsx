@@ -1,15 +1,24 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import React,{ StrictMode } from 'react'
+import ReactDOM, { createRoot } from 'react-dom/client'
 import './index.css'
+// import  from "react-dom/client";
+import {Provider} from "react-redux";
+import store from "./store/store.js";
 import App from './App.jsx'
 import {createBrowserRouter,Route, RouterProvider} from 'react-router-dom'
-import Home_Page from './pages/home_page/Home_page.jsx'
+import Home_Page from './pages/home_page/Home_Page.jsx'
 import LikedVideo_Page from './pages/likedVideo_page/LikedVideo_page.jsx'
 import WatchHistory_Page from './pages/watchHistory_page/WatchHistory_Page.jsx'
 import WatchLater_Page from './pages/watchLater_page/WatchLater_Page.jsx'
 import YourVideo_Page from './pages/yourVideo_page/YourVideo_Page.jsx'
 import You_Page from './pages/you_page/You_Page.jsx'
-import Channel_Page from './pages/channel_page/Channel_Page.jsx'
+import Channel_Page from './pages/channel_page/Channel_Page.jsx';
+import Login_page from './pages/login_page/Login_Page.jsx';
+import Signup_Page from './pages/signup_page/Signup_Page.jsx';
+import VideoUploadAndEdit_Page from './pages/video_upload_and_edit_page/VideoUploadAndEdit_Page.jsx';
+import Playlist_Page from './pages/playlist_page/Playlist_Page.jsx';
+import PlayVideo_Page from './pages/playVideo_page/PlayVideo_Page.jsx';
+
 
 
 
@@ -41,12 +50,32 @@ const router=createBrowserRouter(
           element:<WatchHistory_Page/>,
         },
         {
+          path:'/playlist',
+          element:<Playlist_Page/>,
+        },
+        {
           path:'/yourVideo',
           element:<YourVideo_Page/>,
         },
         {
           path:'/yourChannel',
           element:<Channel_Page/>,
+        },
+        {
+          path:'/signup',
+          element:<Signup_Page/>,
+        },
+        {
+          path:'/login',
+          element:<Login_page/>,
+        },
+        {
+          path:'/uploadAndEdit',
+          element:<VideoUploadAndEdit_Page/>,
+        },
+        {
+          path:'/playVideo',
+          element:<PlayVideo_Page/>,
         },
        
 
@@ -57,15 +86,19 @@ const router=createBrowserRouter(
 )
 
 
-
+console.log("Redux Store:", store);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router}/>
+   <Provider store={store}>
+   <RouterProvider router={router}/>
 
-    {/* <App /> */}
+{/* <App /> */}
+   </Provider>
   </StrictMode>,
 )
+
+
 
 
 
