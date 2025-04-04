@@ -1,4 +1,5 @@
-// import { verifyJWT } from "../middleware/auth.middleware.js";
+/**
+ * // import { verifyJWT } from "../middleware/auth.middleware.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import crypto from "crypto";
@@ -388,3 +389,5 @@ export  {
 //   verifyPayment,
 //   verifyPaymentStatus,
 // };
+
+ */

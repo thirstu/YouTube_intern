@@ -1,4 +1,5 @@
-    import {verifyJWT} from "../middleware/auth.middleware.js";
+/**
+ *     import {verifyJWT} from "../middleware/auth.middleware.js";
     import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
@@ -88,3 +89,4 @@ export {
     paymentHistory,
     updateUserPlan,
 }
+ */

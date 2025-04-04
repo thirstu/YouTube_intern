@@ -2,29 +2,29 @@
 
 import {Router} from 'express';
 
-import { upload } from '../middleware/multer.middleware.js';
-import { verifyJWT } from '../middleware/auth.middleware.js';
-import { 
-  stripePayment,
-  stripePaymentVerification,
-  stripeRetrieveBalance,
-  stripeProductList,
-  stripeDeleteCustomer,
-  stripeGetAccount,
-  stripeCreateCustomer
-  //   createOrder,
-  // savePaymentData,
-  // verifyPayment,
-  // verifyPaymentStatus,
-} from '../controllers/payment.controller.js';
+// import { upload } from '../middleware/multer.middleware.js';
+// import { verifyJWT } from '../middleware/auth.middleware.js';
+// import { 
+//   stripePayment,
+//   stripePaymentVerification,
+//   stripeRetrieveBalance,
+//   stripeProductList,
+//   stripeDeleteCustomer,
+//   stripeGetAccount,
+//   stripeCreateCustomer
+//   //   createOrder,
+//   // savePaymentData,
+//   // verifyPayment,
+//   // verifyPaymentStatus,
+// } from '../controllers/payment.controller.js';
 
-const router = Router();
-router.use(verifyJWT);
-
-
+// const router = Router();
+// router.use(verifyJWT);
 
 
-router.route("/stripePayment").get(stripePayment);
+
+
+// router.route("/stripePayment").get(stripePayment);
 
 
 
