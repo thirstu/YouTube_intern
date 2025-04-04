@@ -1,6 +1,6 @@
 
 
-import {Router} from 'express';
+// import {Router} from 'express';
 
 // import { upload } from '../middleware/multer.middleware.js';
 // import { verifyJWT } from '../middleware/auth.middleware.js';
@@ -28,7 +28,7 @@ import {Router} from 'express';
 
 
 
-export default router;
+// export default router;
 
 
 // router.route("/order").post(upload.none(),createOrder);

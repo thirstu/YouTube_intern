@@ -12,7 +12,7 @@ dotenv.config({
 // const express=require('express');
 
 
-
+const PORT = process.env.PORT || 8000;
 
 
 connectDB()
@@ -20,8 +20,8 @@ connectDB()
     app.on("error",(err)=>{
         console.log(`aaaa  ---- ${err}`);
     })
-    app.listen(env_file.PORT||8000,()=>{
-        console.log(`server is  listening on ${env_file.PORT}`);
+    app.listen(PORT,()=>{
+        console.log(`server is  listening on ${env_file.PORT} ${process.env.PORT} ${PORT}`);
     })
 
 })

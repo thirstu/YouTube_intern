@@ -49,8 +49,8 @@ import  tweet  from './routes/tweet.routes.js';
 import userRouter
 from './routes/user.routes.js'
 import  video  from './routes/video.routes.js';
-import  premium  from './routes/premium.routes.js';
-import  payment  from './routes/payment.routes.js';
+// import  premium  from './routes/premium.routes.js';
+// import  payment  from './routes/payment.routes.js';
 
 
 /////routes declarations
@@ -65,8 +65,8 @@ app.use("/api/v1/subscription",subscription)
 app.use("/api/v1/tweet",tweet)
 app.use("/api/v1/users",userRouter)
 app.use("/api/v1/video",video)
-app.use("/api/v1/premium",premium)
-app.use("/api/v1/payment",payment)
+// app.use("/api/v1/premium",premium)
+// app.use("/api/v1/payment",payment)
 
 
 
