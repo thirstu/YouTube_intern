@@ -13,7 +13,9 @@ dotenv.config({
 
 
 const PORT = process.env.PORT || 8000;
-
+app.get('/', (req, res) => {
+    res.send('Welcome to the homepage!');
+  });
 
 connectDB()
 .then(res=>{
@@ -26,6 +28,7 @@ connectDB()
 
 })
 .catch(err=>console.error(err,`aaaa----   ${err} MongoDB connection failed src/index.js`));
+
 
 
 
