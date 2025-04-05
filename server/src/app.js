@@ -7,11 +7,20 @@ import Stripe from "stripe";
 
 // const stripe=Stripe(process.env.STRIPE_SECRET_KEY);
 const app=express();
-
+const allowedOrigins = [
+    'http://localhost:5173',
+    'https://poetic-lolly-bd51df.netlify.app'
+  ]
 app.use(cors({
-    origin:process.env.CORS_ORIGIN,
-    credentials:true,
-}))
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  }))
 
 // for taking data from form
 app.use(express.json({limit:"16kb"}))
