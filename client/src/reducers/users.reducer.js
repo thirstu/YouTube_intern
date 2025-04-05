@@ -120,9 +120,15 @@ const userSlice=createSlice({
     },
 
     reducers:{
-        resetError: (state) => {
+        resetErrorReducer: (state) => {
             state.error = null;
         },
+        setAccessTokenReducer:(state,action)=>{
+            state.accessToken = action.payload;
+        },
+        setUserReducer:(state,action)=>{
+            state.accessToken = action.payload;
+        }
 
     }, // Normal synchronous reducers (if needed)
 
@@ -221,7 +227,7 @@ const userSlice=createSlice({
 
 
 })
-export const { resetError } = userSlice.actions;
+export const { resetErrorReducer,setAccessTokenReducer,setUserReducer } = userSlice.actions;
 export default userSlice.reducer;
 
 

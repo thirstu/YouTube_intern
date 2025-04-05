@@ -34,19 +34,26 @@ function App() {
 
 
   useEffect(()=>{
-       // 🔄 Auto refresh access token when the app loads
-       const token = Cookies.get();
-       console.log(!accessToken);
+      try {
+         // 🔄 Auto refresh access token when the app loads
+        //  const token = Cookies.get();
+        dispatch(allVideos());
 
-       if (!accessToken&&token) {
-           dispatch(refreshAccess());
-       }
-       dispatch(allVideos());
-       dispatch(getUserPlays());
-
-       //////////////////////////////////////////
-       //////////////////////////////////////////
-       //////////////////////////////////////////
+        dispatch(refreshAccess());
+         console.log(!accessToken);
+  
+         if (!accessToken&&token) {
+         dispatch(getUserPlays());
+             
+         }
+  
+         //////////////////////////////////////////
+         //////////////////////////////////////////
+         //////////////////////////////////////////
+      } catch (error) {
+        console.error("Failed to refresh token", err);
+        dispatch(logout());
+      }
  
   },[dispatch])
   // console.log(res);

@@ -1,12 +1,11 @@
 import React from 'react';
-import city from '../../components/video/vid.mp4';
 import { RxDotsVertical } from 'react-icons/rx';
 import ShowVideo_Grid from '../../components/videoGrid/ShowVideo_Grid';
 import { LiaDownloadSolid } from "react-icons/lia";
 
 import './LikedVideo_Page.css';
 
-const LikedVideo_Page = () => {
+const LikedVideo_Page = (city) => {
   return (
     <div className="component_container">
     <div className="liked_videos_page_container">

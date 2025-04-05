@@ -5,11 +5,11 @@ import { IoPauseOutline } from "react-icons/io5";
 import { IoSettingsOutline } from "react-icons/io5";
 import { RxCross1 } from "react-icons/rx";
 import { RxDotsVertical } from "react-icons/rx";
-import city from '../../components/video/vid.mp4';
 
 
-const WatchHistory_Page = () => {
+const WatchHistory_Page = (city) => {
   return (
+    
      <div className="component_container">
       <h1>Watch history</h1>
       <div className="watch_history_page_container">

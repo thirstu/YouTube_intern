@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import city from "../../components/video/vid.mp4";
 import { RxDotsVertical } from "react-icons/rx";
 import "./Channel_Page.css";
 import { deleteVid, usersAllVideos } from "../../reducers/video.reducer";

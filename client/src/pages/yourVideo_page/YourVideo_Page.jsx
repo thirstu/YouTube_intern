@@ -1,5 +1,4 @@
 import React ,{useEffect}from 'react'
-import city from '../../components/video/vid.mp4';
 import { LiaDownloadSolid } from 'react-icons/lia';
 import { RxDotsVertical } from 'react-icons/rx';
 import { getUsersAllVideos } from '../../api/video.api';

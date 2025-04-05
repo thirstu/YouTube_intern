@@ -1,7 +1,5 @@
 import React from 'react';
 import "./ShowVideo.css";
-import city from '../video/city.mp4';
-import vid from '../video/vid.mp4';
 import { RxDotsVertical } from 'react-icons/rx';
 import { useNavigate } from 'react-router-dom';
 const ShowVideo = ({video}) => {

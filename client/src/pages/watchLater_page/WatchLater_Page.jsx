@@ -1,9 +1,8 @@
 import React from 'react'
-import city from '../../components/video/vid.mp4';
 import { LiaDownloadSolid } from 'react-icons/lia';
 import { RxDotsVertical } from 'react-icons/rx';
 
-const WatchLater_Page = () => {
+const WatchLater_Page = (city) => {
   return (
     <div className="component_container">
        <div className="liked_videos_page_container">

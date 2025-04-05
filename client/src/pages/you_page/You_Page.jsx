@@ -4,7 +4,6 @@ import { FaGoogle } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import { AiOutlinePlus } from "react-icons/ai";
 import { IoIosArrowDown } from 'react-icons/io';
-import city from '../../components/video/vid.mp4';
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import './You_Page.css';
 const You_Page = () => {

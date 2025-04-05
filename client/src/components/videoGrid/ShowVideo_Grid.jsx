@@ -1,6 +1,6 @@
 import React from 'react';
 import "./ShowVideo_Grid.css";
-import city from '../video/city.mp4';
+// import city from '../video/city.mp4';
 import ShowVideo from '../showVideo/ShowVideo';
 
 const ShowVideo_Grid = ({videos}) => {
