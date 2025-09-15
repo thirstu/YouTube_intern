@@ -2,7 +2,7 @@ import {Router} from 'express';
 
 import { upload } from '../middleware/multer.middleware.js';
 import { verifyJWT } from '../middleware/auth.middleware.js';
-import { getSubscribedChannels,getUserChannelSubscribers,toggleSubscription } from '../controllers/subscription.controller.js';
+import { getChannelSubscriberCount, getSubscribedChannels,getUserChannelSubscribers,toggleSubscription } from '../controllers/subscription.controller.js';
 
 const router = Router();
 router.use(verifyJWT);
@@ -12,6 +12,7 @@ router.use(verifyJWT);
 router.route("/toggle/:channelId").get(toggleSubscription);
 router.route("/channels/:subscriberId").get(getSubscribedChannels);
 router.route("/subscribers/:channelId").get(getUserChannelSubscribers);
+router.route("/subscribers/count/:channelId").get(getChannelSubscriberCount);
 
 
 export default router;

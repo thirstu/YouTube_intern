@@ -10,6 +10,7 @@ API.interceptors.request.use((req)=>{
     
     const accessToken = state.user?.accessToken; // Extract token from userSlice
     console.log("accessToken: " , accessToken);
+    // if(!accessToken)return req.headers.Authorization = `Bearer ${accessToken}`;
 
         if (accessToken) {
             console.log("if ---accessToken: " , accessToken);

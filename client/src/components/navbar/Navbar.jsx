@@ -60,7 +60,9 @@ const Navbar = () => {
 
       <div className="nav_right">
         <div className="create" onClick={()=>{
-          navigate("/uploadAndEdit")
+          navigate("/upload"
+            // , { state: { editingVideo: video } }
+          )
 
         }}>
           <FiPlus className="right_icon" />
@@ -70,7 +72,8 @@ const Navbar = () => {
           <IoIosNotifications className="right_icon" />
         </div>
         <div className="nav_profile" >
-          <span onClick={handleToggle}>A</span>
+          {accessToken?<span onClick={handleToggle}>A</span>:<button onClick={handleToggle}>Sign-up</button>}
+          
 
           
 

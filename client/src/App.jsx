@@ -12,7 +12,7 @@ import axios, {isCancel, AxiosError} from 'axios';
 import { Outlet } from 'react-router-dom';
 import { getAllVideos } from './api/video.api.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout, refreshAccess } from './reducers/users.reducer.js';
+import { logout, refreshAccess, setAccessTokenReducer } from './reducers/users.reducer.js';
 import Cookies from "js-cookie"
 import { allVideos } from './reducers/video.reducer.js';
 import { getUserPlays } from './reducers/playlist.reducer.js';
@@ -23,9 +23,13 @@ function App() {
   //     console.log(res);
   //   }).catch(err=>console.error(err)).finally((a)=>a)
   // }
-  const {accessToken}=useSelector(state=>{
+  //   const user=useSelector(state=>{
+  //   console.log(state);
+  //   return state.user;
+  // })
+  const accessToken=useSelector(state=>{
     console.log(state);
-    return state.user
+    return state.user?.accessToken
   })
   const dispatch = useDispatch();
   const [count, setCount] = useState(0);
@@ -38,19 +42,19 @@ function App() {
          // 🔄 Auto refresh access token when the app loads
         //  const token = Cookies.get();
         dispatch(allVideos());
+       
 
-        dispatch(refreshAccess());
-         console.log(!accessToken);
+        if(accessToken)dispatch(refreshAccess());
+        
+        if(accessToken){
+          setAccessTokenReducer(accessToken);
+        }
+        
   
-         if (!accessToken&&token) {
-         dispatch(getUserPlays());
-             
-         }
-  
          //////////////////////////////////////////
          //////////////////////////////////////////
          //////////////////////////////////////////
-      } catch (error) {
+      } catch (err) {
         console.error("Failed to refresh token", err);
         dispatch(logout());
       }

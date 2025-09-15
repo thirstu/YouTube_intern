@@ -6,4 +6,4 @@ const toggleVideoLike=async()=>await API.get("/like/toggle-video-like/:videoId")
 const getLikedVideos=async()=>await API.get("/like/liked-videos/:userId");
 
 
-export {}
+export {toggleCommentLike,toggleTweetLike,toggleVideoLike,getLikedVideos}

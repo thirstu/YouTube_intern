@@ -15,6 +15,7 @@ import { Premium } from "../models/premium.models.js";
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
+    console.log("generateAccessAndRefreshTokens-----user",user);
     const accessToken = await user.generateAccessToken();
     const refreshToken = await user.generateRefreshToken();
     user.refreshToken = refreshToken;
@@ -124,6 +125,8 @@ const registerUser = asyncHandler(async (req, res, next) => {
 });
 
 const loginUser = asyncHandler(async (req, res, next) => {
+  console.log("-128--loginUser------------------");
+
   ////taking login details form req body => data
   /////check if user exists userName or email
   /////if user does not exist then response user is not registered please register
@@ -222,12 +225,15 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
   try {
-    console.log(req.cookies, req.body);
+    // console.log("228---refreshAccessToken ---req.user._id",req.user._id);
+    console.log("229--refreshAccessToken ",req.cookies, req.body);
     const incomingRefreshToken =
       (await req.cookies.refreshToken) || req.body.refreshToken;
 
     if (!incomingRefreshToken) {
+
       throw new ApiError(401, "unauthorized request");
+      
     }
 
     const decodedToken = jwt.verify(

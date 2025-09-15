@@ -8,7 +8,7 @@ const router = Router();
 
 
 
-
+//////public route/////////
 
 router.route("/all-videos?").get(getAllVideos);
 
@@ -16,7 +16,7 @@ router.route("/all-videos?").get(getAllVideos);
 
 router.use(verifyJWT);
 
-
+//////personal route////////
 
 router.route("/upload").post(upload.fields([
     {

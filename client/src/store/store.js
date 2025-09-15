@@ -3,6 +3,7 @@ import videoReducer from "../reducers/video.reducer.js"
 import userReducer from "../reducers/users.reducer.js"
 import playlistReducer from "../reducers/playlist.reducer.js"
 import commentReducer from "../reducers/comment.reducer.js"
+import subscriptionReducer from "../reducers/subscription.reducer.js"
 // console.log(videoReducer);
 /////configureStore() → Creates a store with a single or multiple reducers.
 /////The videos slice will manage the video-related data.
@@ -12,6 +13,8 @@ const store =configureStore({
         user:userReducer,
         playlist:playlistReducer,
         comments:commentReducer,
+        subscription:subscriptionReducer,
+
     },
 })
 

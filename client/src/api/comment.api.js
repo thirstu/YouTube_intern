@@ -1,21 +1,23 @@
 import { API } from "./user.api.js";
 
 const addComment=async({comment,videoId})=>{
-    console.log("addComment------",videoId);
+    console.log("addComment------",videoId,comment);
     const res=await API.post(`/comment/add-comments/${videoId}`,{content:comment},{headers: { "Content-Type": "application/json" }});
     console.log(res);
     return res.data;
 }
-const getVideoComments=async()=>{
+const getVideoComments=async(videoId)=>{
+    console.log(videoId);
     const res=await API.get(`/comment/comments/${videoId}`);
     return res.data;
 }
-const updateComment=async()=>{
-    const res=await API.post(`/comment/update-comments/${commentId}`,{comment},{headers: { "Content-Type": "application/json" }});
+const updateComment=async({_id:commentId,editText:comment})=>{
+    console.log(commentId,comment);
+    const res=await API.post(`/comment/update-comments/${commentId}`,{content:comment},{headers: { "Content-Type": "application/json" }});
 
     return res.data;
 }
-const deleteComment=async()=>{
+const deleteComment=async(commentId)=>{
     const res=await API.get(`/comment/delete-comments/${commentId}`);
     return res.data;
 }

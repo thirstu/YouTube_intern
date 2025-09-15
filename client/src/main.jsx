@@ -23,6 +23,7 @@ import PlayVideo_Page from './pages/playVideo_page/PlayVideo_Page.jsx';
 
 
 
+
 const router=createBrowserRouter(
   [
     {
@@ -70,11 +71,15 @@ const router=createBrowserRouter(
           element:<Login_page/>,
         },
         {
-          path:'/uploadAndEdit',
+          path:'/upload',
           element:<VideoUploadAndEdit_Page/>,
         },
         {
-          path:'/playVideo',
+          path:'/editingVideo',
+          element:<VideoUploadAndEdit_Page/>,
+        },
+        {
+          path:'/playVideo/:videoId',
           element:<PlayVideo_Page/>,
         },
        

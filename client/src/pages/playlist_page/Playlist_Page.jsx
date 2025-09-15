@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import PlaylistCard from "../../components/playlist_card/Playlist_Card.jsx";
-import { getUserPlays } from "../../reducers/playlist.reducer.js";
+import { getUserPlays ,deletePlay,updatePlay} from "../../reducers/playlist.reducer.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
-
+import './Playlist_Page.css'
 function Playlist_Page() {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -22,6 +22,7 @@ function Playlist_Page() {
   }, [dispatch, accessToken, location.pathname]);
 
   // console.log(playlists);
+
 
   if (isLoading) {
     return <div className="playlist_page">Loading your playlists...</div>;

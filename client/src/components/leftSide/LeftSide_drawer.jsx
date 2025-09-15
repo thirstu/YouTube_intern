@@ -95,7 +95,7 @@ const LeftSide_drawer = () => {
       </div>
 
       {/* /////////////////////////////// */}
-
+{/* 
       <div className="left_block">
         <div className=" left_item_container">
           <span className="block_title"> Subscriptions</span>
@@ -110,9 +110,9 @@ const LeftSide_drawer = () => {
 
           <span className="greater"><Link to={`/likedVideos`}>channel2</Link> </span>
         </div>
-      </div>
+      </div> */}
       {/* /////////////////////////////// */}
-      <div className="left_block">
+      {/* <div className="left_block">
         <div className=" left_item_container">
           <span className="block_title"> Explore</span>
         </div>
@@ -162,9 +162,9 @@ const LeftSide_drawer = () => {
 
           <span className="greater">Podcasts </span>
         </div>
-      </div>
+      </div> */}
       {/* /////////////////////////////// */}
-      <div className="left_block">
+      {/* <div className="left_block">
         <div className=" left_item_container">
           <span className="block_title">More from YouTube</span>
         </div>
@@ -184,9 +184,9 @@ const LeftSide_drawer = () => {
           <TbBrandYoutubeKids className="left_icons" />
           <span className="greater">YouTube Kids </span>
         </div>
-      </div>
+      </div> */}
       {/* /////////////////////////////// */}
-      <div className="left_block">
+      {/* <div className="left_block">
         <div className=" left_item_container">
           <span className="block_title">Settings</span>
         </div>
@@ -207,7 +207,7 @@ const LeftSide_drawer = () => {
           <MdOutlineFeedback className="left_icons" />
           <span className="greater">Send Feedback </span>
         </div>
-      </div>
+      </div> */}
       {/* /////////////////////////////// */}
       <div className="left_block">
         AboutPressCopyrightContact usCreatorAdvertiseDevelopers

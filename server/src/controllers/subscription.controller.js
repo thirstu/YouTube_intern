@@ -54,9 +54,37 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200,channels," subscribed channels "));
 
 })
+const getChannelSubscriberCount = asyncHandler(async (req, res) => {
+  const { channelId } = req.params;
+  const userId = req.user?._id; // comes from auth middleware
+
+  console.log("getChannelSubscriberCount---channelId", channelId);
+
+  // run both queries in parallel
+  const [count, subscription] = await Promise.all([
+    Subscription.countDocuments({ channel: channelId }),
+    userId ? Subscription.exists({ subscriber: userId, channel: channelId }) : null,
+  ]);
+
+  console.log("getChannelSubscriberCount---count", count);
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      { 
+        count, 
+        isSubscribed: !!subscription // true if user subscribed, false otherwise
+      },
+      "subscriber count and status"
+    )
+  );
+});
+
+
 
 export {
     toggleSubscription,
     getUserChannelSubscribers,
-    getSubscribedChannels
+    getSubscribedChannels,
+    getChannelSubscriberCount
 }

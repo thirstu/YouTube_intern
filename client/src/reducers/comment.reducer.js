@@ -3,6 +3,7 @@ import { addComment, deleteComment, getVideoComments, updateComment } from "../a
 
 // Async thunk actions for comments
 export const fetchComments = createAsyncThunk("comments/fetchComments", async (videoId) => {
+    console.log(videoId);
     const res = await getVideoComments(videoId);
     return res.data;
 });
@@ -28,6 +29,7 @@ const commentSlice = createSlice({
     name: "comments",
     initialState: {
         comments: [],
+        
         status: "idle",
         error: null,
     },
@@ -37,10 +39,14 @@ const commentSlice = createSlice({
             // Fetch Comments
             .addCase(fetchComments.pending, (state) => {
                 state.status = "loading";
+                state.error = null;
             })
             .addCase(fetchComments.fulfilled, (state, action) => {
+                console.log(action);
                 state.status = "succeeded";
-                state.comments = action.payload;
+                state.comments = action.payload.videoComments;
+                // state.videoId = action.meta.arg; // this is the videoId you passed to the thunk
+                state.error = null; // clear old error
             })
             .addCase(fetchComments.rejected, (state, action) => {
                 state.status = "failed";
@@ -51,12 +57,14 @@ const commentSlice = createSlice({
             .addCase(addVideoComment.fulfilled, (state, action) => {
                 state.status = "succeeded";
                 state.comments.push(action.payload);
+                state.error = null;
             })
 
             // Delete Comment
             .addCase(removeVideoComment.fulfilled, (state, action) => {
                 state.status = "succeeded";
                 state.comments = state.comments.filter(comment => comment.id !== action.payload);
+                state.error = null;
             })
 
             // Update Comment

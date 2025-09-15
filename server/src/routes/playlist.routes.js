@@ -2,7 +2,7 @@ import {Router} from 'express';
 
 import { upload } from '../middleware/multer.middleware.js';
 import { verifyJWT } from '../middleware/auth.middleware.js';
-import { addVideoToPlaylist,createPlaylist,deletePlaylist,getPlaylistById,getUserPlaylists,removeVideoFromPlaylist,updatePlaylist, } from '../controllers/playlist.controller.js';
+import { addVideoToPlaylist,createPlaylist,deletePlaylist,getPlaylistById,getUserPlaylists,removeVideoFromPlaylist,updatePlaylist,playlistCheckboxToggle } from '../controllers/playlist.controller.js';
 
 const router = Router();
 router.use(verifyJWT);
@@ -16,6 +16,7 @@ router.route("/get-playlists").get(getUserPlaylists);
 router.route("/update/:playlistId").post(upload.none(),updatePlaylist);
 router.route("/remove-video/:videoId").get(upload.none(),removeVideoFromPlaylist);
 router.route("/delete/:playlistId").get(upload.none(),deletePlaylist);
+router.route("/playlistCheckboxToggle").patch(upload.none(),playlistCheckboxToggle);
 
 
 export default router;

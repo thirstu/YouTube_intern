@@ -2,27 +2,48 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { videoById} from "../../reducers/video.reducer.js";
+import {addVideoToPlay as saveToPlaylist
+,createUserPlaylist,} from "../../reducers/playlist.reducer.js";
 // import { likeVideo, unlikeVideo, saveToPlaylist } from "../../reducers/video.reducer";
 import { FaThumbsUp, FaThumbsDown, FaEllipsisV, FaRegThumbsUp, FaRegThumbsDown } from "react-icons/fa";
-import { addVideoComment,fetchComments } from "../../reducers/comment.reducer.js";
-const PlayVideo_Page = ({likeVideo, unlikeVideo, saveToPlaylist}) => {
+import { addVideoComment,fetchComments,editVideoComment,removeVideoComment } from "../../reducers/comment.reducer.js";
+import { toggleSubscription,getChannelSubscribersCount } from "../../reducers/subscription.reducer.js";
+import { getLikedVideos,toggleVideoLike,toggleCommentLike } from "../../api/like.api.js";
+import CommentsSection from "../../components/comments/CommentsList.jsx";
+import PlayList_SaveOptions from "../../components/playlist_controls/PlayList_Controler.jsx";
+const PlayVideo_Page = ({likeVideo, unlikeVideo}) => {
+
+   const { videoId } = useParams();
+  const [saveDropdownOpen, setSaveDropdownOpen] = useState(false);
   const { state } = useLocation();
-  
-  const {accessToken}=useSelector(state=>state.user);
+  console.log(videoId,state);
+  const { subscribedChannels, status ,subscriberCount,
+isSubscribed
+} = useSelector(
+    (state) => {
+      console.log(state);
+      console.log(state.subscription.channelSubscribers.length,state.subscription.subscribedChannels.length);
+      return state.subscription
+    }
+  );
+  console.log(subscribedChannels, status,subscriberCount);
+  const {accessToken,user}=useSelector(state=>state.user);
   const commentState=useSelector(state=>state.comments);
-  console.log(commentState);
   const video = state; // Video data from navigation state
-  const  videoId  = video._id // Get video ID from URL params
+  // const  videoId  = video._id // Get video ID from URL params
+  console.log(commentState,user?._id,video?.owner);
+
   const dispatch = useDispatch();
 
+  
   const [liked, setLiked] = useState(video?.isLiked || false);
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState(commentState?.comments || []);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [subscribed, setSubscribed] = useState(video?.isSubscribed || false);
+  const [subscribed, setSubscribed] = useState(isSubscribed || false);
 
 
+ 
   const handleLike = () => {
     liked ? dispatch(unlikeVideo(videoId)) : dispatch(likeVideo(videoId));
     setLiked(!liked);
@@ -33,137 +54,153 @@ const PlayVideo_Page = ({likeVideo, unlikeVideo, saveToPlaylist}) => {
     setMenuOpen(false);
   };
 
-  const handleCommentSubmit = (e) => {
-    e.preventDefault();
-    if (!comment.trim()) return;
-    setComments([...comments, { text: comment, liked: false }]);
+  // const handleCommentSubmit = (e) => {
+  //   e.preventDefault();
+  //   if (!comment.trim()) return;
+  //   setComments([...comments, { text: comment, liked: false }]);
 
-    console.log(comment,videoId);
-    dispatch(addVideoComment({comment,videoId}))
-    setComment("");
-  };
+  //   console.log(comment,videoId);
+  //   dispatch(addVideoComment({comment,videoId}))
+  //   setComment("");
+  // };
 
-  const toggleSubscribe = () => {
+  const toggleSubscribe = ({channelId}) => {
+   if(accessToken){
+     console.log(channelId);
+    dispatch(toggleSubscription(channelId));
     setSubscribed(!subscribed);
+   }
   };
   useEffect(() => {
-    console.log("hello",accessToken);
+    console.log("hello",accessToken,videoId);
 
     if (accessToken && videoId) {
+      dispatch(getChannelSubscribersCount({channelId:video?.owner}))
+
       dispatch(fetchComments(videoId));
-      console.log("hello",accessToken);
+    setSubscribed(isSubscribed);
+
+      console.log("hello",accessToken,subscribed);
+
     }
   }, [accessToken, videoId, dispatch]); // Runs when accessToken or videoId changes
-  
-  useEffect(() => {
-    if (commentState.comments) {
-      setComments(commentState.comments); // Update local state when Redux updates
-    }
-  }, [commentState.comments]);
+   
+  // useEffect(() => {
+  //   if (commentState.comments) {
+  //     setComments(commentState.comments); // Update local state when Redux updates
+  //   }
+  // }, [commentState.comments]);
+//   useEffect(() => {
+//     console.log("commentState");
+
+//     dispatch(fetchComments(videoId));
+//     console.log(commentState);
+// }, []);
+
+// useEffect(() => {
+//     console.log(commentState);
+
+//   if (commentState.status === "succeeded") {
+//     setComments(commentState.comments);
+//     console.log(commentState);
+
+//   }
+// }, [commentState.status, commentState.comments]);
   
 
   return (
-    <div className="max-w-3xl mx-auto p-4">
-      {/* Video Player */}
-      <div className="w-full h-64 bg-black">
-        <video src={video?.videoFile} controls className="w-full h-full"></video>
-      </div>
+    <div className="max-w-4xl mx-auto p-4 bg-white rounded-lg shadow-sm">
+  {/* Video Player */}
+  <div className="w-full aspect-video bg-black rounded-lg overflow-hidden">
+    <video
+      src={video?.videoFile}
+      controls
+      className="w-full h-full object-cover"
+    ></video>
+  </div>
 
-      {/* Video Info Row (Profile, Title, Subscribe Button) */}
-      <div className="flex items-center justify-between mt-4">
-        <div className="flex items-center gap-3">
-          {/* Channel Profile Picture */}
-          <img src={video?.channelProfile} alt="Channel" className="w-10 h-10 rounded-full" />
-          <div>
-            <h2 className="text-lg font-bold">{video?.title}</h2>
-            <p className="text-gray-500">{video?.subscribers} Subscribers</p>
-          </div>
-        </div>
-
-        {/* Subscribe/Unsubscribe Button */}
-        <button
-          onClick={toggleSubscribe}
-          className={`px-4 py-2 rounded ${subscribed ? "bg-gray-500 text-white" : "bg-red-500 text-white"}`}
-        >
-          {subscribed ? "Unsubscribe" : "Subscribe"}
-        </button>
-      </div>
-
-      {/* Video Actions Row (Like, Unlike, More Options) */}
-      <div className="flex items-center justify-between mt-4">
-        <div className="flex items-center gap-4">
-          {/* Like/Unlike Buttons */}
-          <button onClick={handleLike} className="flex items-center gap-1">
-            {liked ? <FaThumbsUp className="text-blue-500" /> : <FaRegThumbsUp />}
-            <span>{video?.likes || 0}</span>
-          </button>
-          <button className="flex items-center gap-1">
-            <FaRegThumbsDown />
-          </button>
-        </div>
-
-        {/* Three-Dot Menu for More Options */}
-        <div className="relative">
-          <button onClick={() => setMenuOpen(!menuOpen)}>
-            <FaEllipsisV />
-          </button>
-          {menuOpen && (
-            <div className="absolute right-0 bg-white shadow-md rounded-md p-2">
-              <button onClick={handleSave} className="block w-full text-left px-2 py-1 hover:bg-gray-100">
-                Save to Playlist
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Comments Section */}
-      <div className="mt-6">
-        <h3 className="text-lg font-bold mb-2">Comments</h3>
-        <form onSubmit={handleCommentSubmit} className="flex gap-2 mb-4">
-          <input
-            type="text"
-            placeholder="Add a comment..."
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            className="flex-1 p-2 border rounded"
-          />
-          <button type="submit" className="px-4 py-2 bg-green-500 text-white rounded">
-            Comment
-          </button>
-        </form>
-
-        {/* Display Comments */}
-        <div>
-          
-          {commentState?.comments.length > 0 ? (
-            comments?.map((cmt, index) => {
-              console.log(cmt);
-
-
-              return (
-                <div key={index} className="flex justify-between items-center border-b p-2">
-                  <p>{cmt.text}</p>
-                  <div className="flex items-center gap-2">
-                    <button>
-                      <FaRegThumbsUp />
-                    </button>
-                    <button>
-                      <FaRegThumbsDown />
-                    </button>
-                    <button>
-                      <FaEllipsisV />
-                    </button>
-                  </div>
-                </div>
-              )
-            })
-          ) : (
-            <p className="text-gray-500">No comments yet.</p>
-          )}
-        </div>
+  {/* Video Info Row */}
+  <div className="flex items-center justify-between mt-5 border-b pb-4">
+    <div className="flex items-center gap-4">
+      {/* Channel Profile */}
+      <img
+        src={video?.channelProfile || "/default-avatar.png"}
+        alt="Channel"
+        className="w-12 h-12 rounded-full object-cover border border-gray-300"
+      />
+      <div>
+        <h2 className="text-xl font-semibold">{video?.title}</h2>
+        <p className="text-sm text-gray-500">{subscriberCount} subscribers</p>
       </div>
     </div>
+
+    {/* Subscribe Button */}
+   {
+    user?._id!==video?.owner? <button
+      onClick={()=>toggleSubscribe({channelId:video?.owner})}
+      className={`px-5 py-2 rounded-full font-semibold transition ${
+        subscribed
+          ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
+          : "bg-red-600 text-white hover:bg-red-700"
+      }`}
+    >
+      {subscribed ? "Unsubscribe" : "Subscribe"}
+    </button>:null
+   }
+  </div>
+
+  {/* Like/Unlike Row */}
+  <div className="flex items-center justify-between mt-4">
+    <div className="flex items-center gap-4">
+      <button
+        onClick={handleLike}
+        className="flex items-center gap-2 px-3 py-1 rounded-full border hover:bg-gray-100 transition"
+      >
+        {liked ? (
+          <FaThumbsUp className="text-blue-500" />
+        ) : (
+          <FaRegThumbsUp />
+        )}
+        <span>{video?.likes || 0}</span>
+      </button>
+
+      <button className="flex items-center gap-2 px-3 py-1 rounded-full border hover:bg-gray-100 transition">
+        <FaRegThumbsDown />
+      </button>
+    </div>
+
+    {/* Menu */}
+    <div className="relative">
+      <button
+        onClick={() => setMenuOpen(!menuOpen)}
+        className="p-2 rounded-full hover:bg-gray-100"
+      >
+        <FaEllipsisV />
+      </button>
+
+      {menuOpen && (
+        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border">
+          <button
+            onClick={() => setSaveDropdownOpen(!saveDropdownOpen)}
+            className="w-full text-left px-4 py-2 hover:bg-gray-100"
+          >
+            Save to Playlist
+          </button>
+
+          {saveDropdownOpen && (
+            <PlayList_SaveOptions videoId={videoId}/>
+          )}
+        </div>
+      )}
+    </div>
+  </div>
+
+  {/* Comments */}
+  
+<CommentsSection videoId={videoId} accessToken={accessToken} />
+</div>
+
+  
   );
 }
 

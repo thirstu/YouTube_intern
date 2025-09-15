@@ -62,6 +62,7 @@ const updateComment = asyncHandler(async (req, res) => {
 
     const user=req.user;
     const {content}=req.body;
+    console.log(commentId, "----",content,"----","----",req.body);
 
     const comment=await Comment.findByIdAndUpdate(commentId,{
         content:content,

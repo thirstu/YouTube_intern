@@ -5,9 +5,14 @@ import './Home_page.css';
 import ShowVideo_Grid from '../../components/videoGrid/ShowVideo_Grid';
 import Category_Tablist from '../../components/tablist/Category_Tablist';
 import  {allVideos } from "../../reducers/video.reducer.js";
+import { getUserPlays } from "../../reducers/playlist.reducer.js";
 
 // import { getAllVideos } from '../../api/video.api.js';
 const Home_Page = () => {
+  const {accessToken}=useSelector(state=>{
+    console.log(state);
+    return state.user
+  })
   const dispatch=useDispatch();
   const {allChannelsVideos:videos,status,error}=useSelector((state)=>{
     console.log(state);
@@ -15,7 +20,11 @@ const Home_Page = () => {
   })
 
   useEffect(()=>{
-    dispatch(allVideos())//Fetch videos on mount  
+     if(accessToken){
+              dispatch(getUserPlays());
+              dispatch(allVideos());
+            }
+    //Fetch videos on mount  
   },[dispatch])
 
   if(status==="loading")return <p>Loading...</p>

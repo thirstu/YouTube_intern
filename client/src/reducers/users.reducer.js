@@ -19,13 +19,15 @@ const storedToken = null;
 export const register=createAsyncThunk("user/registerUser",async (formData,{rejectWithValue })=>{
  try {
        const res=await registerUser(formData,);
-   
-       if (!res.ok) {
-        return rejectWithValue(data); // Return error message from backend
-    }
+   console.log("res",res,"-----",res.data?.success===true);
+    //    if (res.data?.success===true) {
+    //     return rejectWithValue(data); // Return error message from backend
+    // }
    
        console.log(res);
-       return res.data//// Returns video data
+    // localStorage.setItem("token", res.data?.data?.token);
+
+       return res.data//// Returns user data
  } catch (err) {
     return  rejectWithValue(err.response?.data || err.message);
  }
@@ -127,7 +129,7 @@ const userSlice=createSlice({
             state.accessToken = action.payload;
         },
         setUserReducer:(state,action)=>{
-            state.accessToken = action.payload;
+            state.user = action.payload;
         }
 
     }, // Normal synchronous reducers (if needed)
@@ -135,9 +137,11 @@ const userSlice=createSlice({
     extraReducers:(builder)=>{
         builder
         .addCase(register.pending,(state)=>{
+            console.log(state);
             state.status="loading";
         })
         .addCase(register.fulfilled,(state,action)=>{
+            console.log(state,action);
             state.status="succeeded";
             state.isAuthenticated = true;
             state.user=action.payload;

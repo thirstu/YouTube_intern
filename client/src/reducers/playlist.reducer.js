@@ -6,13 +6,16 @@ import {
     deletePlaylist,
     getPlaylistById,
     getUserPlaylists,
-    updatePlaylist 
+    updatePlaylist,
+    togglePlaylist
+     
 } from "../api/playlist.api.js";
 
 //// Async thunk actions for playlist management
 
-export const createUserPlaylist = createAsyncThunk("playlist/createPlaylist", async () => {
-    const res = await createPlaylist();
+export const createUserPlaylist = createAsyncThunk("playlist/createPlaylist", async (data) => {
+    console.log(data);
+    const res = await createPlaylist(data);
     return res.data;
 });
 
@@ -26,8 +29,9 @@ export const removeVideoFromPlay = createAsyncThunk("playlist/removeVideoFromPla
     return res.data;
 });
 
-export const deletePlay = createAsyncThunk("playlist/deletePlaylist", async () => {
-    const res = await deletePlaylist();
+export const deletePlay = createAsyncThunk("playlist/deletePlaylist", async ({playlistId}) => {
+    console.log(playlistId);
+    const res = await deletePlaylist({playlistId});
     return res.data;
 });
 
@@ -42,10 +46,27 @@ export const getUserPlays = createAsyncThunk("playlist/getUserPlaylists", async 
     return res.data;
 });
 
-export const updatePlay = createAsyncThunk("playlist/updatePlaylist", async () => {
-    const res = await updatePlaylist();
+export const updatePlay = createAsyncThunk("playlist/updatePlaylist", async ({ playlistId,
+       
+        name}) => {
+    const res = await updatePlaylist({ playlistId,
+       
+        name});
     return res.data;
 });
+export const toggleUserPlaylist = createAsyncThunk(
+  "playlist/togglePlaylist",
+  async (data, { rejectWithValue }) => {
+    try {
+        console.log(data);
+      const res = await togglePlaylist(data);
+      console.log(res);
+      return res.data; // contains updatedPlaylist + playlistsWithSelected
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
 
 const playlistSlice = createSlice({ 
     name: "playlist",
@@ -63,34 +84,54 @@ const playlistSlice = createSlice({
             })
             .addCase(createUserPlaylist.fulfilled, (state, action) => {
                 state.status = "succeeded";
-                state.playlists.push(action.payload);
+                state.playlists.push(action.payload.data);
             })
             .addCase(createUserPlaylist.rejected, (state, action) => {
                 state.status = "failed";
                 state.error = action.error.message;
             })
-            .addCase(addVideoToPlay.fulfilled, (state, action) => {
+            .addCase(addVideoToPlay.fulfilled, (state) => {
                 state.status = "succeeded";
             })
-            .addCase(removeVideoFromPlay.fulfilled, (state, action) => {
+            .addCase(removeVideoFromPlay.fulfilled, (state) => {
                 state.status = "succeeded";
             })
             .addCase(deletePlay.fulfilled, (state, action) => {
                 state.status = "succeeded";
-                state.playlists = state.playlists.filter(p => p.id !== action.payload.id);
+                state.playlists = state.playlists.filter(
+                  (p) => p._id !== action.payload.id
+                );
             })
             .addCase(getPlayById.fulfilled, (state, action) => {
                 state.status = "succeeded";
                 state.selectedPlaylist = action.payload;
             })
             .addCase(getUserPlays.fulfilled, (state, action) => {
-                console.log(state.payload);
                 state.status = "succeeded";
-                state.playlists = action.payload;
+                state.playlists = action.payload.data;
             })
             .addCase(updatePlay.fulfilled, (state, action) => {
                 state.status = "succeeded";
                 state.selectedPlaylist = action.payload;
+            })
+            // ✅ new toggle handler
+            .addCase(toggleUserPlaylist.pending, (state) => {
+                state.status = "loading";
+            })
+            .addCase(toggleUserPlaylist.fulfilled, (state, action) => {
+                state.status = "succeeded";
+                console.log(state,action.payload);
+                // overwrite playlists with latest (with selected flag)
+                state.playlists = action.payload.data.playlists;
+                // update selected playlist if it matches
+                const updated = action.payload.data?.updatedPlaylist;
+                if (state.selectedPlaylist?._id === updated?._id) {
+                  state.selectedPlaylist = updated;
+                }
+            })
+            .addCase(toggleUserPlaylist.rejected, (state, action) => {
+                state.status = "failed";
+                state.error = action.payload || action.error.message;
             });
     }
 });

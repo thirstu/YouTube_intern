@@ -6,7 +6,10 @@ import { Link } from "react-router-dom";
 
 const Signup_Page = () => {
   const dispatch = useDispatch();
-  const { loading, error, user } = useSelector((state) => state.user);
+  const { loading, error, user } = useSelector((state) => {
+    console.log(state);
+    return state.user;
+  });
 
   const [formData, setFormData] = useState({
     userName: "",
