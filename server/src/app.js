@@ -9,18 +9,22 @@ import Stripe from "stripe";
 const app=express();
 const allowedOrigins = [
     'http://localhost:5173',
-    'https://youtube-hmm.netlify.app/'
+    'https://youtube-hmm.netlify.app'
   ]
-app.use(cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true,
-  }))
+// app.use(cors({
+//     origin: function (origin, callback) {
+//       if (!origin || allowedOrigins.includes(origin)) {
+//         callback(null, true);
+//       } else {
+//         callback(new Error('Not allowed by CORS'));
+//       }
+//     },
+//     credentials: true,
+//   }))
+  app.use(cors({
+  origin: "https://youtube-hmm.netlify.app",  // your Netlify URL
+  credentials: true
+}));
 
 // for taking data from form
 app.use(express.json({limit:"16kb"}))
