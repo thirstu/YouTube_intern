@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import './Home_page.css';
+import './Home_Page.css';
 import ShowVideo_Grid from '../../components/videoGrid/ShowVideo_Grid';
 import Category_Tablist from '../../components/tablist/Category_Tablist';
 import  {allVideos } from "../../reducers/video.reducer.js";
