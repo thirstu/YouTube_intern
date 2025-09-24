@@ -2,7 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie"
 import store from "../store/store.js"
 // https://youtube-intern-xllr.onrender.com
-const API=axios.create({baseURL:2===2?`http://localhost:3000/api/v1`:`https://youtube-intern-xllr.onrender.com/`});
+const API=axios.create({baseURL:2===2?`http://localhost:3000/api/v1`:`https://youtube-intern-xllr.onrender.com/api/v1`});
 // const API=axios.create({baseURL:`https://youtube-intern-xllr.onrender.com/`});
 
 API.interceptors.request.use((req)=>{
