@@ -9,7 +9,7 @@ import Stripe from "stripe";
 const app=express();
 const allowedOrigins = [
     'http://localhost:5173',
-    'https://poetic-lolly-bd51df.netlify.app'
+    'https://youtube-hmm.netlify.app/'
   ]
 app.use(cors({
     origin: function (origin, callback) {
